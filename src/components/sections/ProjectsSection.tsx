@@ -1,17 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { ExternalLink, Github, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, Star, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { portfolioData } from "@/data/portfolio-data";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useState, useRef, useEffect } from "react";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
@@ -24,148 +18,255 @@ const projectImages: Record<string, string> = {
 
 export const ProjectsSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [activeProject, setActiveProject] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const container = scrollContainerRef.current;
+    const scrollPosition = container.scrollLeft;
+    const cardWidth = container.offsetWidth * 0.8;
+    const newIndex = Math.round(scrollPosition / cardWidth);
+    
+    if (newIndex !== activeProject && newIndex < portfolioData.projects.length) {
+      setActiveProject(newIndex);
+    }
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [activeProject]);
+
+  const project = portfolioData.projects[activeProject];
 
   return (
-    <section id="projects" ref={ref} className="py-20 sm:py-32 relative">
-      <div className="container px-4 sm:px-6">
+    <section id="projects" ref={ref} className="py-20 sm:py-32 relative overflow-hidden">
+      <div className="container px-4 sm:px-6 mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center"
         >
           <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-            Curated <span className="gradient-text italic">work</span>
+            Curated <span className="gradient-text italic font-serif">work</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Showcasing my best work and real-world solutions
           </p>
         </motion.div>
-
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full max-w-7xl mx-auto"
-        >
-          <CarouselContent>
-            {portfolioData.projects.map((project, index) => (
-              <CarouselItem key={project.id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-                  className="flex flex-col lg:flex-row gap-8 items-center"
-                >
-                  {/* Project Image - Left Side */}
-                  <div className="w-full lg:w-1/2">
-                    <Card className="glass overflow-hidden group border-primary/20">
-                      <div className="relative h-[400px] sm:h-[500px] overflow-hidden rounded-lg">
-                        <img
-                          src={projectImages[project.image]}
-                          alt={project.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-                        
-                        {/* Metrics Overlay */}
-                        <div className="absolute top-4 right-4 flex gap-2">
-                          <Badge className="glass backdrop-blur-md bg-background/80">
-                            <Star className="h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />
-                            {project.metrics.stars}
-                          </Badge>
-                          <Badge className="glass backdrop-blur-md bg-background/80">
-                            {project.metrics.users} users
-                          </Badge>
-                        </div>
-
-                        {/* Action Buttons Overlay */}
-                        <div className="absolute bottom-6 left-6 right-6 flex gap-3">
-                          <Button asChild className="flex-1 glow-primary">
-                            <a href={project.links.demo} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Live Demo
-                            </a>
-                          </Button>
-                          <Button asChild variant="outline" className="flex-1">
-                            <a href={project.links.github} target="_blank" rel="noopener noreferrer">
-                              <Github className="h-4 w-4 mr-2" />
-                              Code
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
-
-                  {/* Project Details - Right Side */}
-                  <div className="w-full lg:w-1/2 space-y-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="h-1 w-12 bg-primary rounded-full" />
-                      <h3 className="text-3xl sm:text-4xl font-bold gradient-text">
-                        {project.title}
-                      </h3>
-                    </div>
-
-                    <p className="text-muted-foreground text-lg leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    {/* Features */}
-                    <div className="space-y-3">
-                      {project.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-foreground/90">
-                          <span className="text-primary text-xl mt-0.5">+</span>
-                          <span className="text-base">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Tech Stack */}
-                    <div className="space-y-3 pt-4">
-                      <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                        Tech Stack
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech) => (
-                          <Badge 
-                            key={tech} 
-                            variant="outline" 
-                            className="text-xs px-3 py-1 bg-background/50 backdrop-blur-sm hover:bg-primary/10 transition-colors"
-                          >
-                            {tech}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          
-          <div className="flex justify-center gap-4 mt-12">
-            <CarouselPrevious className="relative left-0 translate-x-0 translate-y-0 h-12 w-12" />
-            <CarouselNext className="relative right-0 translate-x-0 translate-y-0 h-12 w-12" />
-          </div>
-        </Carousel>
-
-        {/* View More */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center mt-16"
-        >
-          <Button size="lg" variant="outline" className="hover-scale" asChild>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <Github className="h-5 w-5 mr-2" />
-              View All Projects on GitHub
-            </a>
-          </Button>
-        </motion.div>
       </div>
+
+      {/* Split Layout */}
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:h-[600px]">
+        {/* Left Side - Scrollable Projects */}
+        <div className="w-full lg:w-1/2 order-2 lg:order-1">
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-8 px-4 sm:px-6 lg:pl-[10vw]"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {portfolioData.projects.map((proj, index) => (
+              <motion.div
+                key={proj.id}
+                initial={{ opacity: 0, x: 100 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 + index * 0.15 }}
+                className="flex-shrink-0 w-[80vw] lg:w-[35vw] snap-center"
+                onClick={() => setActiveProject(index)}
+              >
+                <Card className={`glass overflow-hidden group cursor-pointer transition-all duration-500 ${
+                  activeProject === index 
+                    ? 'border-primary/50 scale-100 shadow-2xl shadow-primary/20' 
+                    : 'border-border/20 scale-95 opacity-60 hover:opacity-80'
+                }`}>
+                  <div className="relative h-[400px] sm:h-[500px] overflow-hidden rounded-lg">
+                    <img
+                      src={projectImages[proj.image]}
+                      alt={proj.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                    
+                    {/* Title Overlay */}
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                        {proj.title}
+                      </h3>
+                      <div className="flex gap-2">
+                        <Badge className="glass backdrop-blur-md bg-background/80">
+                          <Star className="h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />
+                          {proj.metrics.stars}
+                        </Badge>
+                        <Badge className="glass backdrop-blur-md bg-background/80">
+                          {proj.metrics.users}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* View Arrow */}
+                    <div className="absolute top-6 right-6">
+                      <div className="h-10 w-10 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-primary/30 group-hover:bg-primary/30 transition-colors">
+                        <ArrowRight className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Progress Indicators */}
+          <div className="flex justify-center gap-2 mt-6 px-4">
+            {portfolioData.projects.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setActiveProject(index);
+                  const container = scrollContainerRef.current;
+                  if (container) {
+                    const cardWidth = container.offsetWidth * 0.8;
+                    container.scrollTo({ left: cardWidth * index, behavior: 'smooth' });
+                  }
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeProject === index 
+                    ? 'w-12 bg-primary' 
+                    : 'w-6 bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Right Side - Project Details (Fixed/Sticky) */}
+        <div className="w-full lg:w-1/2 lg:sticky lg:top-32 order-1 lg:order-2 px-4 sm:px-6 lg:pr-[10vw]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeProject}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-6"
+            >
+              {/* Header Line */}
+              <div className="flex items-center gap-3">
+                <motion.div 
+                  className="h-1 bg-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: 48 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                />
+                <h3 className="text-3xl sm:text-4xl font-bold gradient-text">
+                  {project.title}
+                </h3>
+              </div>
+
+              {/* Description */}
+              <motion.p 
+                className="text-muted-foreground text-lg leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                {project.description}
+              </motion.p>
+
+              {/* Features */}
+              <motion.div 
+                className="space-y-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                {project.features.map((feature, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 + idx * 0.1 }}
+                    className="flex items-start gap-3 text-foreground/90"
+                  >
+                    <span className="text-primary text-xl mt-0.5 font-bold">+</span>
+                    <span className="text-base">{feature}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Tech Stack */}
+              <motion.div 
+                className="space-y-3 pt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  Tech Stack
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, idx) => (
+                    <motion.div
+                      key={tech}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.8 + idx * 0.05 }}
+                    >
+                      <Badge 
+                        variant="outline" 
+                        className="text-xs px-3 py-1 bg-background/50 backdrop-blur-sm hover:bg-primary/10 transition-colors"
+                      >
+                        {tech}
+                      </Badge>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Action Buttons */}
+              <motion.div 
+                className="flex gap-3 pt-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+              >
+                <Button asChild className="flex-1 glow-primary">
+                  <a href={project.links.demo} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Live Demo
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="flex-1">
+                  <a href={project.links.github} target="_blank" rel="noopener noreferrer">
+                    <Github className="h-4 w-4 mr-2" />
+                    View Code
+                  </a>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* View More */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, delay: 0.6 }}
+        className="text-center mt-20 px-4"
+      >
+        <Button size="lg" variant="outline" className="hover-scale" asChild>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <Github className="h-5 w-5 mr-2" />
+            View All Projects on GitHub
+          </a>
+        </Button>
+      </motion.div>
     </section>
   );
 };

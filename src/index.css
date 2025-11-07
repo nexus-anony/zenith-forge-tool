@@ -137,6 +137,16 @@ All colors MUST be HSL.
   .magnetic {
     @apply transition-all duration-300 ease-out;
   }
+
+  /* Hide scrollbar */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Animations */
