@@ -147,6 +147,33 @@ All colors MUST be HSL.
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Scroll Typography */
+  .scroll-typography {
+    @apply will-change-transform;
+  }
+
+  .scroll-char {
+    @apply will-change-transform;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  /* Gradient Text Animated */
+  .gradient-text-animated {
+    @apply will-change-transform;
+    animation: gradient-shift 8s linear infinite;
+  }
+
+  /* Hardware acceleration */
+  .hero-bg-image,
+  .hero-content,
+  .scroll-typography,
+  .scroll-char {
+    @apply will-change-transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
 }
 
 /* Animations */
