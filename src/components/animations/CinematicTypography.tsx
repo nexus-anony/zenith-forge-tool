@@ -2,6 +2,10 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,7 +14,11 @@ export const CinematicTypography = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const composerRef = useRef<EffectComposer | null>(null);
   const particlesRef = useRef<THREE.Points | null>(null);
+  const speedLinesRef = useRef<THREE.LineSegments | null>(null);
+  const scrollVelocityRef = useRef(0);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -39,13 +47,38 @@ export const CinematicTypography = () => {
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
     containerRef.current.appendChild(renderer.domElement);
+
+    // Post-processing setup
+    const composer = new EffectComposer(renderer);
+    composerRef.current = composer;
+    
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+    
+    // Bloom effect for neon glow
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.8, // strength
+      0.5, // radius
+      0.8  // threshold
+    );
+    composer.addPass(bloomPass);
+    
+    // Motion blur effect
+    const afterimagePass = new AfterimagePass(0.88);
+    composer.addPass(afterimagePass);
 
     // Particle field
     createParticleField(scene);
 
-    // Cyberpunk tunnel
-    createCyberpunkTunnel(scene);
+    // Hyperspace tunnel with multiple layers
+    createHyperspaceTunnel(scene);
+    
+    // Speed lines for hyperspace effect
+    createSpeedLines(scene);
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
@@ -56,76 +89,63 @@ export const CinematicTypography = () => {
     spotLight.angle = Math.PI / 6;
     scene.add(spotLight);
 
-    // Point lights with colors
-    const colors = [0xff0080, 0x00ff80, 0x0080ff];
-    colors.forEach((color, i) => {
-      const light = new THREE.PointLight(color, 1, 800);
-      light.position.set(
-        Math.cos(i * Math.PI * 2 / 3) * 400,
-        0,
-        -400 - i * 400
-      );
-      scene.add(light);
-      
-      gsap.to(light, {
-        intensity: 2,
-        duration: 2,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut',
-        delay: i * 0.5
-      });
-    });
+    // Tunnel lighting system
+    createTunnelLights(scene);
 
     // Create sprite-based text with character reveal
     createSpriteText('CREATIVE', 200, 0, scene);
-    createSpriteText('DEVELOPER', 250, -600, scene);
-    createSpriteText('& DESIGNER', 180, -1200, scene);
-    createSpriteText('PORTFOLIO', 280, -1800, scene);
+    createSpriteText('DEVELOPER', 250, -800, scene); // Centered in tunnel
+    createSpriteText('& DESIGNER', 180, -3000, scene);
+    createSpriteText('PORTFOLIO', 280, -6000, scene);
     
     // Create character reveal text
-    createCharacterRevealText('SCROLL', 150, -300, scene);
-    createCharacterRevealText('EXPLORE', 150, -900, scene);
-    createCharacterRevealText('DISCOVER', 150, -1500, scene);
+    createCharacterRevealText('SCROLL', 150, -1500, scene);
+    createCharacterRevealText('EXPLORE', 150, -4500, scene);
+    createCharacterRevealText('DISCOVER', 150, -9000, scene);
 
     // Create 3D geometric shapes
     createFloatingShapes(scene);
 
-    // Camera animation path
-    const cameraPath = [
-      { z: 500, x: 0, y: 0, rotation: 0 },
-      { z: 0, x: -100, y: 50, rotation: 0.3 },
-      { z: -600, x: 100, y: -30, rotation: -0.2 },
-      { z: -1200, x: 0, y: 80, rotation: 0 },
-      { z: -1800, x: -150, y: 0, rotation: 0.4 },
-      { z: -2400, x: 0, y: 0, rotation: 0 }
-    ];
-
+    // Hyperspace camera rush through tunnel
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=500%',
-        scrub: 2,
+        end: '+=400%',
+        scrub: 1.5,
         pin: true,
-        anticipatePin: 1
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          // Track scroll velocity for effects
+          scrollVelocityRef.current = Math.abs(self.getVelocity() / 1000);
+        }
       }
     });
 
-    cameraPath.forEach((point, i) => {
-      tl.to(camera.position, {
-        x: point.x,
-        y: point.y,
-        z: point.z,
-        duration: 1,
-        ease: 'power1.inOut'
-      }, i)
-      .to(camera.rotation, {
-        z: point.rotation,
-        duration: 1,
-        ease: 'power2.inOut'
-      }, i);
-    });
+    // Camera rushes through tunnel with acceleration
+    tl.to(camera.position, {
+      z: -15000,
+      duration: 10,
+      ease: 'power2.in',
+      onUpdate: function() {
+        // Add camera shake during fast sections
+        const progress = this.progress();
+        if (progress > 0.3 && progress < 0.8) {
+          const shakeIntensity = Math.sin(progress * Math.PI) * 20;
+          camera.position.x = (Math.random() - 0.5) * shakeIntensity;
+          camera.position.y = (Math.random() - 0.5) * shakeIntensity;
+        }
+      }
+    })
+    // FOV increases for speed effect
+    .to(camera, {
+      fov: 110,
+      duration: 10,
+      ease: 'power2.in',
+      onUpdate: () => {
+        camera.updateProjectionMatrix();
+      }
+    }, 0);
 
     // Animation loop
     let animationId: number;
@@ -137,14 +157,34 @@ export const CinematicTypography = () => {
         particlesRef.current.rotation.y += 0.0005;
       }
 
+      // Animate speed lines
+      if (speedLinesRef.current) {
+        const positions = speedLinesRef.current.geometry.attributes.position;
+        for (let i = 0; i < positions.count; i += 2) {
+          let z = positions.getZ(i);
+          z += 50; // Move toward camera
+          if (z > camera.position.z + 500) {
+            z = camera.position.z - 2000; // Reset behind camera
+          }
+          positions.setZ(i, z);
+          positions.setZ(i + 1, z + 100);
+        }
+        positions.needsUpdate = true;
+      }
+
       // Spotlight follows camera
       spotLight.position.x = camera.position.x;
       spotLight.position.z = camera.position.z + 100;
+      spotLight.target.position.set(camera.position.x, camera.position.y, camera.position.z - 500);
+      spotLight.target.updateMatrixWorld();
 
       // Update depth of field focus
       updateDepthOfField(camera.position.z);
 
-      renderer.render(scene, camera);
+      // Render with post-processing
+      if (composerRef.current) {
+        composerRef.current.render();
+      }
     };
     animate();
 
@@ -237,21 +277,41 @@ export const CinematicTypography = () => {
     sprite.position.z = zPosition;
     sprite.scale.set(600, 150, 1);
 
-    // Animate sprite
-    gsap.to(sprite.rotation, {
-      z: Math.PI * 2,
-      duration: 20,
-      repeat: -1,
-      ease: 'none'
-    });
+    // Special treatment for DEVELOPER text (tunnel center)
+    if (text === 'DEVELOPER') {
+      // Counter-rotate to tunnel
+      gsap.to(sprite.rotation, {
+        z: -Math.PI * 2,
+        duration: 25,
+        repeat: -1,
+        ease: 'none'
+      });
 
-    gsap.to(sprite.material, {
-      opacity: 0.5,
-      duration: 2,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut'
-    });
+      // Holographic glow pulse
+      gsap.to(sprite.material, {
+        opacity: 1,
+        duration: 1.5,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
+      });
+    } else {
+      // Animate other sprites
+      gsap.to(sprite.rotation, {
+        z: Math.PI * 2,
+        duration: 20,
+        repeat: -1,
+        ease: 'none'
+      });
+
+      gsap.to(sprite.material, {
+        opacity: 0.5,
+        duration: 2,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
+      });
+    }
 
     scene.add(sprite);
   };
@@ -300,45 +360,204 @@ export const CinematicTypography = () => {
     });
   };
 
-  const createCyberpunkTunnel = (scene: THREE.Scene) => {
-    const tunnelSegments = 30;
-    const colors = [0xff00ff, 0x00ffff, 0xff0080];
+  const createHyperspaceTunnel = (scene: THREE.Scene) => {
+    const isMobile = window.innerWidth < 768;
+    const tunnelSegments = isMobile ? 30 : 120;
+    const tunnelLayers = [150, 300, 450]; // Three nested tunnel layers
+    const neonColors = [0x00ffff, 0xff00ff, 0xff0080, 0x00ff80];
 
-    for (let i = 0; i < tunnelSegments; i++) {
-      const geometry = new THREE.TorusGeometry(250 + i * 15, 6, 16, 32);
-      const material = new THREE.MeshStandardMaterial({
-        color: colors[i % colors.length],
-        emissive: colors[i % colors.length],
-        emissiveIntensity: 0.8,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6
-      });
+    // Create instanced mesh for performance
+    tunnelLayers.forEach((baseRadius, layerIndex) => {
+      const geometry = new THREE.TorusGeometry(1, 1, 16, 32);
+      const instancedMesh = new THREE.InstancedMesh(
+        geometry,
+        new THREE.MeshStandardMaterial({
+          emissiveIntensity: 0.8,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.6
+        }),
+        tunnelSegments
+      );
 
-      const ring = new THREE.Mesh(geometry, material);
-      ring.position.z = -100 - i * 100;
-      // Remove the X rotation so rings face the camera
-      ring.rotation.x = 0;
-      scene.add(ring);
+      const dummy = new THREE.Object3D();
 
-      // Pulsing animation
-      gsap.to(ring.scale, {
-        x: 1.1,
-        y: 1.1,
-        z: 1.1,
-        duration: 1 + i * 0.1,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut'
-      });
+      for (let i = 0; i < tunnelSegments; i++) {
+        const radius = baseRadius + i * 3;
+        const thickness = 8 + Math.random() * 4;
+        const zPos = -100 - i * 150;
 
-      // Rotation animation around Z axis (facing camera)
-      gsap.to(ring.rotation, {
-        z: Math.PI * 2,
-        duration: 20 - i * 0.3,
-        repeat: -1,
-        ease: 'none'
-      });
+        // Position and scale
+        dummy.position.set(0, 0, zPos);
+        dummy.scale.set(radius, radius, thickness);
+        dummy.rotation.x = 0; // Face camera
+        dummy.updateMatrix();
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+
+        // Set color based on Z position (gradient along tunnel)
+        const color = new THREE.Color();
+        const hue = ((zPos + 3000) / 18000 + layerIndex * 0.1) % 1;
+        color.setHSL(hue, 1, 0.5);
+        instancedMesh.setColorAt(i, color);
+
+        // Individual ring animations
+        const ring = { 
+          index: i, 
+          mesh: instancedMesh,
+          scale: { x: 1, y: 1, z: 1 },
+          rotation: { z: 0 },
+          baseRadius: radius
+        };
+
+        // Breathing pulse animation
+        gsap.to(ring.scale, {
+          x: 0.95 + Math.random() * 0.1,
+          y: 0.95 + Math.random() * 0.1,
+          z: 0.95 + Math.random() * 0.1,
+          duration: 1.5 + i * 0.02,
+          yoyo: true,
+          repeat: -1,
+          ease: 'sine.inOut',
+          onUpdate: () => {
+            dummy.position.set(0, 0, zPos);
+            dummy.scale.set(radius * ring.scale.x, radius * ring.scale.y, thickness * ring.scale.z);
+            dummy.rotation.z = ring.rotation.z;
+            dummy.updateMatrix();
+            instancedMesh.setMatrixAt(i, dummy.matrix);
+            instancedMesh.instanceMatrix.needsUpdate = true;
+          }
+        });
+
+        // Counter-rotating patterns
+        const direction = (i + layerIndex) % 2 === 0 ? 1 : -1;
+        gsap.to(ring.rotation, {
+          z: direction * Math.PI * 2,
+          duration: 3 + Math.random() * 5,
+          repeat: -1,
+          ease: 'none'
+        });
+
+        // Inner glow layer
+        if (i % 2 === 0) {
+          const glowGeometry = new THREE.TorusGeometry(radius + 10, thickness + 2, 16, 32);
+          const glowMaterial = new THREE.MeshStandardMaterial({
+            color: neonColors[i % neonColors.length],
+            emissive: neonColors[i % neonColors.length],
+            emissiveIntensity: 1.2,
+            side: THREE.BackSide,
+            transparent: true,
+            opacity: 0.3,
+            wireframe: false
+          });
+          const glowRing = new THREE.Mesh(glowGeometry, glowMaterial);
+          glowRing.position.z = zPos;
+          scene.add(glowRing);
+
+          // Glow pulse
+          gsap.to(glowMaterial, {
+            opacity: 0.5,
+            duration: 1 + i * 0.05,
+            yoyo: true,
+            repeat: -1,
+            ease: 'sine.inOut'
+          });
+        }
+      }
+
+      instancedMesh.instanceMatrix.needsUpdate = true;
+      if (instancedMesh.instanceColor) {
+        instancedMesh.instanceColor.needsUpdate = true;
+      }
+
+      // Set material properties
+      const material = instancedMesh.material as THREE.MeshStandardMaterial;
+      const layerColor = neonColors[layerIndex % neonColors.length];
+      material.color.setHex(layerColor);
+      material.emissive.setHex(layerColor);
+
+      scene.add(instancedMesh);
+    });
+  };
+
+  const createSpeedLines = (scene: THREE.Scene) => {
+    const lineCount = 500;
+    const positions = new Float32Array(lineCount * 6); // 2 vertices per line, 3 coords per vertex
+    const colors = new Float32Array(lineCount * 6);
+
+    for (let i = 0; i < lineCount; i++) {
+      const angle = (i / lineCount) * Math.PI * 2;
+      const radius = 350 + Math.random() * 100;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      const z = -Math.random() * 3000;
+
+      // Start point
+      positions[i * 6] = x;
+      positions[i * 6 + 1] = y;
+      positions[i * 6 + 2] = z;
+
+      // End point (100px line)
+      positions[i * 6 + 3] = x;
+      positions[i * 6 + 4] = y;
+      positions[i * 6 + 5] = z + 100;
+
+      // Cyan color with fade
+      const color = new THREE.Color(0x00ffff);
+      colors[i * 6] = color.r;
+      colors[i * 6 + 1] = color.g;
+      colors[i * 6 + 2] = color.b;
+      colors[i * 6 + 3] = color.r;
+      colors[i * 6 + 4] = color.g;
+      colors[i * 6 + 5] = color.b;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.5,
+      blending: THREE.AdditiveBlending
+    });
+
+    const speedLines = new THREE.LineSegments(geometry, material);
+    speedLinesRef.current = speedLines;
+    scene.add(speedLines);
+  };
+
+  const createTunnelLights = (scene: THREE.Scene) => {
+    const lightPositions = 120;
+    const colors = [0x00ffff, 0xff00ff, 0xff0080, 0x00ff80];
+
+    for (let i = 0; i < lightPositions; i++) {
+      if (i % 5 === 0) { // Every 5th ring
+        const color = colors[i % colors.length];
+        const light = new THREE.PointLight(color, 1, 1000);
+        light.position.set(0, 0, -100 - i * 150);
+        scene.add(light);
+
+        // Pulsing intensity with sine wave
+        gsap.to(light, {
+          intensity: 2,
+          duration: 2 + i * 0.02,
+          yoyo: true,
+          repeat: -1,
+          ease: 'sine.inOut'
+        });
+
+        // Color cycling
+        gsap.to(light.color, {
+          r: Math.random(),
+          g: Math.random(),
+          b: Math.random(),
+          duration: 5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        });
+      }
     }
   };
 
