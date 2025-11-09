@@ -4,6 +4,7 @@ import { Code2, Lightbulb, Users, Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import profileImage from "@/assets/profile.jpg";
 import { portfolioData } from "@/data/portfolio-data";
+import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
 
 const competencies = [
   {
@@ -32,7 +33,8 @@ export const AboutSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section id="about" ref={ref} className="py-20 sm:py-32 relative">
+    <section id="about" ref={ref} className="py-20 sm:py-32 relative overflow-hidden">
+      <Interactive3DShape type="icosahedron" color="#a78bfa" size={80} position={{ x: -50, y: 0, z: -100 }} />
       <div className="container px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

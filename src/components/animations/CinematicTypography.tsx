@@ -48,9 +48,6 @@ export const CinematicTypography = () => {
     // Particle field
     createParticleField(scene);
 
-    // Enhanced cyberpunk tunnel
-    createEnhancedCyberpunkTunnel(scene);
-
     // Lighting with design system colors
     const ambientLight = new THREE.AmbientLight(0x1a1a2e, 0.8);
     scene.add(ambientLight);
@@ -567,81 +564,6 @@ export const CinematicTypography = () => {
     });
   };
 
-  const createEnhancedCyberpunkTunnel = (scene: THREE.Scene) => {
-    const tunnelSegments = 50;
-    const colors = [0xa78bfa, 0x60a5fa, 0x22d3ee, 0xec4899, 0xf59e0b];
-
-    for (let i = 0; i < tunnelSegments; i++) {
-      const radius = 250 + i * 12;
-      const geometry = new THREE.TorusGeometry(radius, 8, 20, 40);
-      const material = new THREE.MeshStandardMaterial({
-        color: colors[i % colors.length],
-        emissive: colors[i % colors.length],
-        emissiveIntensity: 1.2,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.8
-      });
-
-      const ring = new THREE.Mesh(geometry, material);
-      ring.position.z = -100 - i * 80;
-      ring.rotation.x = 0;
-      scene.add(ring);
-
-      // Create inner glow ring
-      const glowGeometry = new THREE.TorusGeometry(radius + 5, 12, 20, 40);
-      const glowMaterial = new THREE.MeshStandardMaterial({
-        color: colors[i % colors.length],
-        emissive: colors[i % colors.length],
-        emissiveIntensity: 0.6,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.BackSide
-      });
-
-      const glowRing = new THREE.Mesh(glowGeometry, glowMaterial);
-      glowRing.position.copy(ring.position);
-      glowRing.rotation.copy(ring.rotation);
-      scene.add(glowRing);
-
-      // Pulsing animation
-      gsap.to(ring.scale, {
-        x: 1.15,
-        y: 1.15,
-        z: 1.15,
-        duration: 0.8 + i * 0.05,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut'
-      });
-
-      gsap.to(glowRing.scale, {
-        x: 1.15,
-        y: 1.15,
-        z: 1.15,
-        duration: 0.8 + i * 0.05,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut'
-      });
-
-      // Alternating rotation directions
-      const rotationDirection = i % 2 === 0 ? 1 : -1;
-      gsap.to(ring.rotation, {
-        z: Math.PI * 2 * rotationDirection,
-        duration: 15 - i * 0.2,
-        repeat: -1,
-        ease: 'none'
-      });
-
-      gsap.to(glowRing.rotation, {
-        z: Math.PI * 2 * rotationDirection,
-        duration: 15 - i * 0.2,
-        repeat: -1,
-        ease: 'none'
-      });
-    }
-  };
 
   const createParticleExplosion = (
     x: number,

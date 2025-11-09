@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion";
+import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
 
 interface TechItem {
   name: string;
@@ -176,7 +177,8 @@ export const TechnologiesSection = () => {
   const connections = getConnections();
 
   return (
-    <section id="technologies" className="py-20 sm:py-32 relative">
+    <section id="technologies" className="py-20 sm:py-32 relative overflow-hidden">
+      <Interactive3DShape type="octahedron" color="#22d3ee" size={90} position={{ x: -80, y: 30, z: -100 }} />
       <div className="container px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

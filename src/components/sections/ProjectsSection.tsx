@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
+import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
 
 const projectImages: Record<string, string> = {
   project1,
@@ -48,7 +49,8 @@ export const ProjectsSection = () => {
   const project = portfolioData.projects[activeProject];
 
   return (
-    <section id="projects" ref={ref} className="py-20 sm:py-32 relative">
+    <section id="projects" ref={ref} className="py-20 sm:py-32 relative overflow-hidden">
+      <Interactive3DShape type="torus" color="#60a5fa" size={70} position={{ x: 100, y: 50, z: -100 }} />
       <div className="container px-4 sm:px-6 mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

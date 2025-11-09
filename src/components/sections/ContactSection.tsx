@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { portfolioData } from "@/data/portfolio-data";
+import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
 
 export const ContactSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -51,7 +52,8 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" ref={ref} className="py-20 sm:py-32 relative">
+    <section id="contact" ref={ref} className="py-20 sm:py-32 relative overflow-hidden">
+      <Interactive3DShape type="sphere" color="#ec4899" size={75} position={{ x: 120, y: -40, z: -100 }} />
       <div className="container px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
