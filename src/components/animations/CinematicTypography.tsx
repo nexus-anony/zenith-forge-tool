@@ -11,14 +11,15 @@ export const CinematicTypography = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const particlesRef = useRef<THREE.Points | null>(null);
+  const explosionsRef = useRef<THREE.Points[]>([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Scene setup
+    // Scene setup with vibrant background
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.fog = new THREE.Fog(0x000000, 100, 3000);
+    scene.fog = new THREE.FogExp2(0x0a0a1a, 0.0003);
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(
@@ -41,55 +42,79 @@ export const CinematicTypography = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     containerRef.current.appendChild(renderer.domElement);
 
+    // Parallax star field layers
+    createParallaxStarField(scene);
+
     // Particle field
     createParticleField(scene);
 
-    // Cyberpunk tunnel
-    createCyberpunkTunnel(scene);
+    // Enhanced cyberpunk tunnel
+    createEnhancedCyberpunkTunnel(scene);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    // Lighting with design system colors
+    const ambientLight = new THREE.AmbientLight(0x1a1a2e, 0.8);
     scene.add(ambientLight);
 
-    const spotLight = new THREE.SpotLight(0xffffff, 2);
+    const spotLight = new THREE.SpotLight(0xa78bfa, 3);
     spotLight.position.set(0, 200, 0);
-    spotLight.angle = Math.PI / 6;
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.5;
     scene.add(spotLight);
 
-    // Point lights with colors
-    const colors = [0xff0080, 0x00ff80, 0x0080ff];
+    // Point lights with design system colors (primary, secondary, accent)
+    const colors = [0xa78bfa, 0x60a5fa, 0x22d3ee, 0xec4899, 0xf59e0b];
     colors.forEach((color, i) => {
-      const light = new THREE.PointLight(color, 1, 800);
+      const light = new THREE.PointLight(color, 2, 1200);
       light.position.set(
-        Math.cos(i * Math.PI * 2 / 3) * 400,
-        0,
-        -400 - i * 400
+        Math.cos(i * Math.PI * 2 / 5) * 500,
+        Math.sin(i * Math.PI) * 200,
+        -600 - i * 500
       );
       scene.add(light);
       
       gsap.to(light, {
-        intensity: 2,
-        duration: 2,
+        intensity: 4,
+        duration: 1.5 + i * 0.3,
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut',
-        delay: i * 0.5
+        delay: i * 0.4
+      });
+      
+      gsap.to(light.position, {
+        x: light.position.x + (Math.random() - 0.5) * 200,
+        y: light.position.y + (Math.random() - 0.5) * 200,
+        duration: 4 + i,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
       });
     });
 
-    // Create sprite-based text with character reveal
-    createSpriteText('CREATIVE', 200, 0, scene);
-    createSpriteText('DEVELOPER', 250, -600, scene);
-    createSpriteText('& DESIGNER', 180, -1200, scene);
-    createSpriteText('PORTFOLIO', 280, -1800, scene);
+    // Create enhanced typography with different styles
+    createHolographicText('CREATIVE', 220, 0, scene, 0xa78bfa);
+    createGlitchText('DEVELOPER', 280, -600, scene);
+    createNeonText('& DESIGNER', 200, -1200, scene, 0x22d3ee);
+    createChromeText('PORTFOLIO', 300, -1800, scene);
     
-    // Create character reveal text
-    createCharacterRevealText('SCROLL', 150, -300, scene);
+    // Create character reveal text with explosions
+    createCharacterRevealText('INNOVATE', 150, -300, scene);
     createCharacterRevealText('EXPLORE', 150, -900, scene);
     createCharacterRevealText('DISCOVER', 150, -1500, scene);
+    
+    // Particle explosions at key points
+    createParticleExplosion(0, 0, 0, scene);
+    createParticleExplosion(0, 0, -600, scene);
+    createParticleExplosion(0, 0, -1200, scene);
+    createParticleExplosion(0, 0, -1800, scene);
 
     // Create 3D geometric shapes
-    createFloatingShapes(scene);
+    createEnhancedFloatingShapes(scene);
+    
+    // Floating UI panels
+    createFloatingUIPanel('SKILLS', -300, 100, -400, scene);
+    createFloatingUIPanel('PROJECTS', 300, -80, -1000, scene);
+    createFloatingUIPanel('ABOUT', -280, 120, -1600, scene);
 
     // Camera animation path
     const cameraPath = [
@@ -135,7 +160,17 @@ export const CinematicTypography = () => {
       // Rotate particles
       if (particlesRef.current) {
         particlesRef.current.rotation.y += 0.0005;
+        particlesRef.current.rotation.x += 0.0002;
       }
+      
+      // Animate explosions
+      explosionsRef.current.forEach((explosion, i) => {
+        explosion.rotation.y += 0.01 + i * 0.002;
+        explosion.rotation.x += 0.005;
+        if (explosion.material instanceof THREE.PointsMaterial) {
+          explosion.material.opacity = Math.max(0.3, explosion.material.opacity);
+        }
+      });
 
       // Spotlight follows camera
       spotLight.position.x = camera.position.x;
@@ -166,8 +201,58 @@ export const CinematicTypography = () => {
     };
   }, []);
 
+  const createParallaxStarField = (scene: THREE.Scene) => {
+    // Create 3 layers of stars at different depths
+    const layers = [
+      { count: 1500, depth: 8000, size: 2, speed: 0.0002, color: 0xa78bfa },
+      { count: 1000, depth: 5000, size: 3, speed: 0.0005, color: 0x60a5fa },
+      { count: 500, depth: 3000, size: 4, speed: 0.001, color: 0x22d3ee }
+    ];
+
+    layers.forEach((layer, layerIndex) => {
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(layer.count * 3);
+      const colors = new Float32Array(layer.count * 3);
+
+      for (let i = 0; i < layer.count * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * layer.depth;
+        positions[i + 1] = (Math.random() - 0.5) * layer.depth * 0.5;
+        positions[i + 2] = (Math.random() - 0.5) * layer.depth - layerIndex * 1000;
+
+        const color = new THREE.Color(layer.color);
+        color.multiplyScalar(0.5 + Math.random() * 0.5);
+        
+        colors[i] = color.r;
+        colors[i + 1] = color.g;
+        colors[i + 2] = color.b;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: layer.size,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+      });
+
+      const stars = new THREE.Points(geometry, material);
+      scene.add(stars);
+
+      // Animate each layer
+      gsap.to(stars.rotation, {
+        y: Math.PI * 2,
+        duration: 100 - layerIndex * 20,
+        repeat: -1,
+        ease: 'none'
+      });
+    });
+  };
+
   const createParticleField = (scene: THREE.Scene) => {
-    const particleCount = 3000;
+    const particleCount = 2000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -178,7 +263,8 @@ export const CinematicTypography = () => {
       positions[i + 2] = (Math.random() - 0.5) * 5000 - 1000;
 
       const color = new THREE.Color();
-      color.setHSL((positions[i + 2] + 3000) / 6000, 1, 0.5);
+      const hue = (positions[i + 2] + 3000) / 6000;
+      color.setHSL(hue, 0.9, 0.6);
 
       colors[i] = color.r;
       colors[i + 1] = color.g;
@@ -189,10 +275,10 @@ export const CinematicTypography = () => {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 3,
+      size: 4,
       vertexColors: true,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.7,
       blending: THREE.AdditiveBlending
     });
 
@@ -201,7 +287,56 @@ export const CinematicTypography = () => {
     scene.add(particles);
   };
 
-  const createSpriteText = (
+  const createHolographicText = (
+    text: string,
+    size: number,
+    zPosition: number,
+    scene: THREE.Scene,
+    color: number
+  ) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = 2048;
+    canvas.height = 512;
+
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#a78bfa');
+    gradient.addColorStop(0.5, '#60a5fa');
+    gradient.addColorStop(1, '#22d3ee');
+
+    ctx.fillStyle = gradient;
+    ctx.font = `bold ${size}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Holographic glow
+    ctx.shadowColor = `#${color.toString(16)}`;
+    ctx.shadowBlur = 60;
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMaterial = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.95
+    });
+
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.position.z = zPosition;
+    sprite.scale.set(700, 175, 1);
+
+    gsap.to(sprite.material, {
+      opacity: 0.7,
+      duration: 1.5,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
+
+    scene.add(sprite);
+  };
+
+  const createGlitchText = (
     text: string,
     size: number,
     zPosition: number,
@@ -217,14 +352,68 @@ export const CinematicTypography = () => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Glow effect
-    ctx.shadowColor = '#00ffff';
-    ctx.shadowBlur = 40;
+    // RGB split effect
+    ctx.shadowColor = '#ff0080';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = -5;
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-    ctx.shadowColor = '#ff00ff';
-    ctx.shadowBlur = 30;
+    ctx.shadowColor = '#00ffff';
+    ctx.shadowOffsetX = 5;
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowOffsetX = 0;
+    ctx.shadowBlur = 50;
+    ctx.shadowColor = '#ffffff';
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMaterial = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 1
+    });
+
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.position.z = zPosition;
+    sprite.scale.set(800, 200, 1);
+
+    // Glitch animation
+    gsap.to(sprite.position, {
+      x: '+=5',
+      duration: 0.1,
+      yoyo: true,
+      repeat: -1,
+      repeatDelay: 2
+    });
+
+    scene.add(sprite);
+  };
+
+  const createNeonText = (
+    text: string,
+    size: number,
+    zPosition: number,
+    scene: THREE.Scene,
+    color: number
+  ) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = 2048;
+    canvas.height = 512;
+
+    ctx.fillStyle = `#${color.toString(16)}`;
+    ctx.font = `bold ${size}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Neon glow layers
+    for (let i = 0; i < 5; i++) {
+      ctx.shadowColor = `#${color.toString(16)}`;
+      ctx.shadowBlur = 80 - i * 15;
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    }
 
     const texture = new THREE.CanvasTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({
@@ -235,19 +424,59 @@ export const CinematicTypography = () => {
 
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.z = zPosition;
-    sprite.scale.set(600, 150, 1);
-
-    // Animate sprite
-    gsap.to(sprite.rotation, {
-      z: Math.PI * 2,
-      duration: 20,
-      repeat: -1,
-      ease: 'none'
-    });
+    sprite.scale.set(650, 162, 1);
 
     gsap.to(sprite.material, {
-      opacity: 0.5,
-      duration: 2,
+      opacity: 0.6,
+      duration: 1,
+      yoyo: true,
+      repeat: -1,
+      ease: 'power1.inOut'
+    });
+
+    scene.add(sprite);
+  };
+
+  const createChromeText = (
+    text: string,
+    size: number,
+    zPosition: number,
+    scene: THREE.Scene
+  ) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = 2048;
+    canvas.height = 512;
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#ffffff');
+    gradient.addColorStop(0.4, '#c0c0c0');
+    gradient.addColorStop(0.6, '#808080');
+    gradient.addColorStop(1, '#ffffff');
+
+    ctx.fillStyle = gradient;
+    ctx.font = `bold ${size}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 40;
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMaterial = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.95
+    });
+
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.position.z = zPosition;
+    sprite.scale.set(850, 212, 1);
+
+    gsap.to(sprite.rotation, {
+      z: Math.PI * 0.1,
+      duration: 3,
       yoyo: true,
       repeat: -1,
       ease: 'sine.inOut'
@@ -256,90 +485,304 @@ export const CinematicTypography = () => {
     scene.add(sprite);
   };
 
-  const createFloatingShapes = (scene: THREE.Scene) => {
+  const createEnhancedFloatingShapes = (scene: THREE.Scene) => {
     const shapes = [
-      { type: 'torus', z: -300 },
-      { type: 'octahedron', z: -900 },
-      { type: 'torus', z: -1500 }
+      { type: 'torus', z: -300, color: 0xa78bfa },
+      { type: 'octahedron', z: -600, color: 0x60a5fa },
+      { type: 'icosahedron', z: -900, color: 0x22d3ee },
+      { type: 'torusKnot', z: -1200, color: 0xec4899 },
+      { type: 'dodecahedron', z: -1500, color: 0xf59e0b },
+      { type: 'torus', z: -1800, color: 0xa78bfa }
     ];
 
     shapes.forEach((shapeData, i) => {
       let geometry;
-      if (shapeData.type === 'torus') {
-        geometry = new THREE.TorusGeometry(80, 20, 16, 100);
-      } else {
-        geometry = new THREE.OctahedronGeometry(60, 0);
+      switch (shapeData.type) {
+        case 'torus':
+          geometry = new THREE.TorusGeometry(90, 25, 20, 100);
+          break;
+        case 'octahedron':
+          geometry = new THREE.OctahedronGeometry(70, 1);
+          break;
+        case 'icosahedron':
+          geometry = new THREE.IcosahedronGeometry(65, 0);
+          break;
+        case 'torusKnot':
+          geometry = new THREE.TorusKnotGeometry(50, 15, 100, 16);
+          break;
+        case 'dodecahedron':
+          geometry = new THREE.DodecahedronGeometry(60, 0);
+          break;
+        default:
+          geometry = new THREE.TorusGeometry(80, 20, 16, 100);
       }
 
       const material = new THREE.MeshStandardMaterial({
-        color: 0x00ffff,
-        metalness: 0.8,
-        roughness: 0.2,
-        emissive: 0x0066ff,
-        emissiveIntensity: 0.5,
+        color: shapeData.color,
+        metalness: 0.9,
+        roughness: 0.1,
+        emissive: shapeData.color,
+        emissiveIntensity: 0.8,
         wireframe: true
       });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
-        (i % 2 === 0 ? 1 : -1) * 200,
-        Math.sin(i) * 100,
+        (i % 2 === 0 ? 1 : -1) * (200 + i * 20),
+        Math.sin(i) * 120,
         shapeData.z
       );
 
       scene.add(mesh);
 
-      // Rotate shapes
+      // Complex rotation
       gsap.to(mesh.rotation, {
         x: Math.PI * 2,
         y: Math.PI * 2,
-        duration: 10 + i * 2,
+        z: Math.PI * 2,
+        duration: 8 + i * 1.5,
         repeat: -1,
         ease: 'none'
       });
-    });
-  };
 
-  const createCyberpunkTunnel = (scene: THREE.Scene) => {
-    const tunnelSegments = 30;
-    const colors = [0xff00ff, 0x00ffff, 0xff0080];
-
-    for (let i = 0; i < tunnelSegments; i++) {
-      const geometry = new THREE.TorusGeometry(250 + i * 15, 6, 16, 32);
-      const material = new THREE.MeshStandardMaterial({
-        color: colors[i % colors.length],
-        emissive: colors[i % colors.length],
-        emissiveIntensity: 0.8,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6
-      });
-
-      const ring = new THREE.Mesh(geometry, material);
-      ring.position.z = -100 - i * 100;
-      // Remove the X rotation so rings face the camera
-      ring.rotation.x = 0;
-      scene.add(ring);
-
-      // Pulsing animation
-      gsap.to(ring.scale, {
-        x: 1.1,
-        y: 1.1,
-        z: 1.1,
-        duration: 1 + i * 0.1,
+      // Pulsing scale
+      gsap.to(mesh.scale, {
+        x: 1.2,
+        y: 1.2,
+        z: 1.2,
+        duration: 2 + i * 0.3,
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut'
       });
 
-      // Rotation animation around Z axis (facing camera)
+      // Floating motion
+      gsap.to(mesh.position, {
+        y: mesh.position.y + 50,
+        duration: 3 + i * 0.5,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
+      });
+    });
+  };
+
+  const createEnhancedCyberpunkTunnel = (scene: THREE.Scene) => {
+    const tunnelSegments = 50;
+    const colors = [0xa78bfa, 0x60a5fa, 0x22d3ee, 0xec4899, 0xf59e0b];
+
+    for (let i = 0; i < tunnelSegments; i++) {
+      const radius = 250 + i * 12;
+      const geometry = new THREE.TorusGeometry(radius, 8, 20, 40);
+      const material = new THREE.MeshStandardMaterial({
+        color: colors[i % colors.length],
+        emissive: colors[i % colors.length],
+        emissiveIntensity: 1.2,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      const ring = new THREE.Mesh(geometry, material);
+      ring.position.z = -100 - i * 80;
+      ring.rotation.x = 0;
+      scene.add(ring);
+
+      // Create inner glow ring
+      const glowGeometry = new THREE.TorusGeometry(radius + 5, 12, 20, 40);
+      const glowMaterial = new THREE.MeshStandardMaterial({
+        color: colors[i % colors.length],
+        emissive: colors[i % colors.length],
+        emissiveIntensity: 0.6,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.BackSide
+      });
+
+      const glowRing = new THREE.Mesh(glowGeometry, glowMaterial);
+      glowRing.position.copy(ring.position);
+      glowRing.rotation.copy(ring.rotation);
+      scene.add(glowRing);
+
+      // Pulsing animation
+      gsap.to(ring.scale, {
+        x: 1.15,
+        y: 1.15,
+        z: 1.15,
+        duration: 0.8 + i * 0.05,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
+      });
+
+      gsap.to(glowRing.scale, {
+        x: 1.15,
+        y: 1.15,
+        z: 1.15,
+        duration: 0.8 + i * 0.05,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut'
+      });
+
+      // Alternating rotation directions
+      const rotationDirection = i % 2 === 0 ? 1 : -1;
       gsap.to(ring.rotation, {
-        z: Math.PI * 2,
-        duration: 20 - i * 0.3,
+        z: Math.PI * 2 * rotationDirection,
+        duration: 15 - i * 0.2,
+        repeat: -1,
+        ease: 'none'
+      });
+
+      gsap.to(glowRing.rotation, {
+        z: Math.PI * 2 * rotationDirection,
+        duration: 15 - i * 0.2,
         repeat: -1,
         ease: 'none'
       });
     }
+  };
+
+  const createParticleExplosion = (
+    x: number,
+    y: number,
+    z: number,
+    scene: THREE.Scene
+  ) => {
+    const particleCount = 200;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 150;
+      
+      positions[i] = x + Math.cos(angle) * radius;
+      positions[i + 1] = y + Math.sin(angle) * radius;
+      positions[i + 2] = z + (Math.random() - 0.5) * 100;
+
+      const explosionColors = [
+        new THREE.Color(0xa78bfa),
+        new THREE.Color(0x60a5fa),
+        new THREE.Color(0x22d3ee),
+        new THREE.Color(0xec4899)
+      ];
+      
+      const color = explosionColors[Math.floor(Math.random() * explosionColors.length)];
+      colors[i] = color.r;
+      colors[i + 1] = color.g;
+      colors[i + 2] = color.b;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 6,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+
+    const explosion = new THREE.Points(geometry, material);
+    explosionsRef.current.push(explosion);
+    scene.add(explosion);
+
+    // Explosion animation
+    gsap.fromTo(material, 
+      { opacity: 0 },
+      { 
+        opacity: 0.8,
+        duration: 0.5,
+        ease: 'power2.out'
+      }
+    );
+
+    gsap.to(explosion.scale, {
+      x: 2,
+      y: 2,
+      z: 2,
+      duration: 2,
+      ease: 'power2.out'
+    });
+  };
+
+  const createFloatingUIPanel = (
+    title: string,
+    x: number,
+    y: number,
+    z: number,
+    scene: THREE.Scene
+  ) => {
+    // Create panel background
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = 512;
+    canvas.height = 256;
+
+    // Glassmorphism effect
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, 'rgba(167, 139, 250, 0.2)');
+    gradient.addColorStop(1, 'rgba(96, 165, 250, 0.1)');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Border
+    ctx.strokeStyle = 'rgba(167, 139, 250, 0.5)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+    // Title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#a78bfa';
+    ctx.shadowBlur = 20;
+    ctx.fillText(title, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMaterial = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.9
+    });
+
+    const panel = new THREE.Sprite(spriteMaterial);
+    panel.position.set(x, y, z);
+    panel.scale.set(300, 150, 1);
+
+    scene.add(panel);
+
+    // Floating animation
+    gsap.to(panel.position, {
+      y: y + 30,
+      duration: 3,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
+
+    // Gentle rotation
+    gsap.to(panel.rotation, {
+      z: Math.PI * 0.05,
+      duration: 4,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
+
+    // Opacity pulse
+    gsap.to(panel.material, {
+      opacity: 0.6,
+      duration: 2,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
   };
 
   const createCharacterRevealText = (
