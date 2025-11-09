@@ -20,22 +20,7 @@ export const GradientText = ({
   useEffect(() => {
     if (!textRef.current) return;
 
-    const gradient = `linear-gradient(90deg, ${colors.join(', ')})`;
-    
-    gsap.to(textRef.current, {
-      backgroundImage: gradient,
-      backgroundSize: '200% auto',
-      scrollTrigger: {
-        trigger: textRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1
-      },
-      backgroundPosition: '200% center',
-      ease: 'none'
-    });
-
-    // Continuous animation
+    // Continuous gradient animation
     gsap.to(textRef.current, {
       backgroundPosition: '200% center',
       duration: 8,

@@ -33,27 +33,21 @@ export const ScrollTypography = ({
 
     // Initial animation - Particle assembly
     const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        start: 'top 80%',
-        end: 'top 20%',
-        toggleActions: 'play none none reverse'
-      }
+      delay: delay
     });
 
     tl.from(chars, {
       opacity: 0,
       scale: 0,
-      x: () => gsap.utils.random(-400, 400),
-      y: () => gsap.utils.random(-300, 300),
-      rotation: () => gsap.utils.random(-180, 180),
+      x: () => gsap.utils.random(-200, 200),
+      y: () => gsap.utils.random(-100, 100),
+      rotation: () => gsap.utils.random(-90, 90),
       stagger: {
-        each: 0.02,
+        each: 0.015,
         from: 'random'
       },
-      duration: 1.2,
-      ease: 'power3.out',
-      delay: delay
+      duration: 0.8,
+      ease: 'power3.out'
     });
 
     // 3D flip animation
