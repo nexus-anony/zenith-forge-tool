@@ -120,20 +120,24 @@ export const ScrollTypography = ({
           const angle = Math.atan2(e.clientY - charY, e.clientX - charX);
           const force = (1 - distance / maxDistance) * 30;
 
+          gsap.killTweensOf(char);
           gsap.to(char, {
             x: Math.cos(angle) * force,
             y: Math.sin(angle) * force,
             scale: 1 + force / 100,
             duration: 0.3,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            overwrite: true
           });
         } else {
+          gsap.killTweensOf(char);
           gsap.to(char, {
             x: 0,
             y: 0,
             scale: 1,
             duration: 0.6,
-            ease: 'elastic.out(1, 0.3)'
+            ease: 'elastic.out(1, 0.3)',
+            overwrite: true
           });
         }
       });
@@ -141,12 +145,14 @@ export const ScrollTypography = ({
 
     const handleMouseLeave = () => {
       chars.forEach((char) => {
+        gsap.killTweensOf(char);
         gsap.to(char, {
           x: 0,
           y: 0,
           scale: 1,
           duration: 0.8,
-          ease: 'elastic.out(1, 0.3)'
+          ease: 'elastic.out(1, 0.3)',
+          overwrite: true
         });
       });
     };
@@ -157,6 +163,8 @@ export const ScrollTypography = ({
     return () => {
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);
+      // Kill all tweens on cleanup
+      chars.forEach(char => gsap.killTweensOf(char));
     };
   }, [enableMagnetic, isHovered]);
 
