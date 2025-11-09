@@ -301,11 +301,11 @@ export const CinematicTypography = () => {
   };
 
   const createCyberpunkTunnel = (scene: THREE.Scene) => {
-    const tunnelSegments = 20;
+    const tunnelSegments = 30;
     const colors = [0xff00ff, 0x00ffff, 0xff0080];
 
     for (let i = 0; i < tunnelSegments; i++) {
-      const geometry = new THREE.TorusGeometry(300 + i * 20, 8, 16, 32);
+      const geometry = new THREE.TorusGeometry(250 + i * 15, 6, 16, 32);
       const material = new THREE.MeshStandardMaterial({
         color: colors[i % colors.length],
         emissive: colors[i % colors.length],
@@ -316,8 +316,9 @@ export const CinematicTypography = () => {
       });
 
       const ring = new THREE.Mesh(geometry, material);
-      ring.position.z = -100 - i * 150;
-      ring.rotation.x = Math.PI / 2;
+      ring.position.z = -100 - i * 100;
+      // Remove the X rotation so rings face the camera
+      ring.rotation.x = 0;
       scene.add(ring);
 
       // Pulsing animation
@@ -331,10 +332,10 @@ export const CinematicTypography = () => {
         ease: 'sine.inOut'
       });
 
-      // Rotation animation
+      // Rotation animation around Z axis (facing camera)
       gsap.to(ring.rotation, {
         z: Math.PI * 2,
-        duration: 20 - i * 0.5,
+        duration: 20 - i * 0.3,
         repeat: -1,
         ease: 'none'
       });
