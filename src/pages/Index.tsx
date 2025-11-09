@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Cinematic3DSection } from "@/components/sections/Cinematic3DSection";
@@ -8,23 +9,38 @@ import { AchievementsSection } from "@/components/sections/AchievementsSection";
 import { ProfileLinksSection } from "@/components/sections/ProfileLinksSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FooterSection } from "@/components/sections/FooterSection";
+import { LoadingScreen } from "@/components/animations/LoadingScreen";
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Minimum loading time to show the animation
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <main>
-        <HeroSection />
-        <Cinematic3DSection />
-        <AboutSection />
-        <TechnologiesSection />
-        <ProjectsSection />
-        <AchievementsSection />
-        <ProfileLinksSection />
-        <ContactSection />
-      </main>
-      <FooterSection />
-    </div>
+    <>
+      {isLoading && <LoadingScreen />}
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main>
+          <HeroSection />
+          <Cinematic3DSection />
+          <AboutSection />
+          <TechnologiesSection />
+          <ProjectsSection />
+          <AchievementsSection />
+          <ProfileLinksSection />
+          <ContactSection />
+        </main>
+        <FooterSection />
+      </div>
+    </>
   );
 };
 

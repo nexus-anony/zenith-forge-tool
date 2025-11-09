@@ -98,12 +98,6 @@ export const CinematicTypography = () => {
     createCharacterRevealText('INNOVATE', 150, -300, scene);
     createCharacterRevealText('EXPLORE', 150, -900, scene);
     createCharacterRevealText('DISCOVER', 150, -1500, scene);
-    
-    // Particle explosions at key points
-    createParticleExplosion(0, 0, 0, scene);
-    createParticleExplosion(0, 0, -600, scene);
-    createParticleExplosion(0, 0, -1200, scene);
-    createParticleExplosion(0, 0, -1800, scene);
 
     // Create 3D geometric shapes
     createEnhancedFloatingShapes(scene);
@@ -249,7 +243,7 @@ export const CinematicTypography = () => {
   };
 
   const createParticleField = (scene: THREE.Scene) => {
-    const particleCount = 2000;
+    const particleCount = 1000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -257,7 +251,8 @@ export const CinematicTypography = () => {
     for (let i = 0; i < particleCount * 3; i += 3) {
       positions[i] = (Math.random() - 0.5) * 4000;
       positions[i + 1] = (Math.random() - 0.5) * 2000;
-      positions[i + 2] = (Math.random() - 0.5) * 5000 - 1000;
+      // Push particles further back
+      positions[i + 2] = (Math.random() - 0.5) * 5000 - 2000;
 
       const color = new THREE.Color();
       const hue = (positions[i + 2] + 3000) / 6000;
@@ -272,10 +267,10 @@ export const CinematicTypography = () => {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 4,
+      size: 3,
       vertexColors: true,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.4,
       blending: THREE.AdditiveBlending
     });
 
