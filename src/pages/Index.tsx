@@ -8,15 +8,10 @@ import { AchievementsSection } from "@/components/sections/AchievementsSection";
 import { ProfileLinksSection } from "@/components/sections/ProfileLinksSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FooterSection } from "@/components/sections/FooterSection";
-import { MotionBlur } from "@/components/animations/MotionBlur";
-import { useScrollVelocity } from "@/hooks/useScrollVelocity";
 
 const Index = () => {
-  const velocity = useScrollVelocity();
-
   return (
     <div className="min-h-screen bg-background">
-      <MotionBlur />
       <Navigation />
       <main>
         <HeroSection />
