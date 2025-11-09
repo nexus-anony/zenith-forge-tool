@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "AI Platform",
+      "description": "Advanced machine learning platform with real-time analytics",
+      "tech": ["React", "Three.js", "Python", "TensorFlow"],
+      "zPosition": -500,
+      "color": "#ff0080"
+    },
+    {
+      "id": 2,
+      "title": "E-Commerce Hub",
+      "description": "Full-stack e-commerce solution with 3D product visualization",
+      "tech": ["Next.js", "Three.js", "Stripe", "MongoDB"],
+      "zPosition": -800,
+      "color": "#00ff80"
+    },
+    {
+      "id": 3,
+      "title": "Creative Studio",
+      "description": "Interactive design portfolio with WebGL animations",
+      "tech": ["React", "GSAP", "WebGL", "Blender"],
+      "zPosition": -1200,
+      "color": "#0080ff"
+    },
+    {
+      "id": 4,
+      "title": "Social Network",
+      "description": "Real-time social platform with immersive 3D profiles",
+      "tech": ["React", "Socket.io", "Three.js", "Node.js"],
+      "zPosition": -1500,
+      "color": "#ff8000"
+    }
+  ]
+}
