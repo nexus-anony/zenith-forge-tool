@@ -32,14 +32,33 @@ export const CinematicTypography = () => {
     camera.position.set(0, 0, 500);
     camera.lookAt(0, 0, 0);
 
-    // Renderer setup
+    // Renderer setup with context loss handling
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true
+      alpha: true,
+      powerPreference: "high-performance",
+      failIfMajorPerformanceCaveat: false
     });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    
+    // Handle WebGL context loss/restore
+    const canvas = renderer.domElement;
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      console.log('WebGL context lost');
+      cancelAnimationFrame(animationId);
+    };
+    
+    const handleContextRestored = () => {
+      console.log('WebGL context restored');
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+    
     containerRef.current.appendChild(renderer.domElement);
 
     // Parallax star field layers
@@ -58,33 +77,24 @@ export const CinematicTypography = () => {
     spotLight.penumbra = 0.5;
     scene.add(spotLight);
 
-    // Point lights with design system colors (primary, secondary, accent)
-    const colors = [0xa78bfa, 0x60a5fa, 0x22d3ee, 0xec4899, 0xf59e0b];
+    // Reduced point lights to prevent shader errors
+    const colors = [0xa78bfa, 0x60a5fa, 0x22d3ee];
     colors.forEach((color, i) => {
-      const light = new THREE.PointLight(color, 2, 1200);
+      const light = new THREE.PointLight(color, 1.5, 1000);
       light.position.set(
-        Math.cos(i * Math.PI * 2 / 5) * 500,
-        Math.sin(i * Math.PI) * 200,
-        -600 - i * 500
+        Math.cos(i * Math.PI * 2 / 3) * 400,
+        Math.sin(i * Math.PI) * 150,
+        -800 - i * 600
       );
       scene.add(light);
       
       gsap.to(light, {
-        intensity: 4,
-        duration: 1.5 + i * 0.3,
+        intensity: 2.5,
+        duration: 2 + i * 0.5,
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut',
-        delay: i * 0.4
-      });
-      
-      gsap.to(light.position, {
-        x: light.position.x + (Math.random() - 0.5) * 200,
-        y: light.position.y + (Math.random() - 0.5) * 200,
-        duration: 4 + i,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut'
+        delay: i * 0.5
       });
     });
 
@@ -185,9 +195,39 @@ export const CinematicTypography = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
       cancelAnimationFrame(animationId);
+      
+      // Dispose all geometries and materials
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry?.dispose();
+          if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+          } else {
+            object.material?.dispose();
+          }
+        }
+        if (object instanceof THREE.Sprite) {
+          object.material?.dispose();
+          object.material?.map?.dispose();
+        }
+        if (object instanceof THREE.Points) {
+          object.geometry?.dispose();
+          if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+          } else {
+            object.material?.dispose();
+          }
+        }
+      });
+      
       renderer.dispose();
-      containerRef.current?.removeChild(renderer.domElement);
+      renderer.forceContextLoss();
+      if (containerRef.current?.contains(renderer.domElement)) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
@@ -509,13 +549,11 @@ export const CinematicTypography = () => {
           geometry = new THREE.TorusGeometry(80, 20, 16, 100);
       }
 
-      const material = new THREE.MeshStandardMaterial({
+      const material = new THREE.MeshBasicMaterial({
         color: shapeData.color,
-        metalness: 0.9,
-        roughness: 0.1,
-        emissive: shapeData.color,
-        emissiveIntensity: 0.8,
-        wireframe: true
+        wireframe: true,
+        transparent: true,
+        opacity: 0.8
       });
 
       const mesh = new THREE.Mesh(geometry, material);

@@ -116,7 +116,7 @@ export const ProjectsSection = () => {
           </div>
 
           {/* Right Side - Sticky Project Details */}
-          <div className="w-full lg:w-1/2 lg:sticky lg:top-32 order-1 lg:order-2">
+          <div className="w-full lg:w-1/2 lg:sticky lg:top-24 lg:h-[calc(100vh-12rem)] lg:overflow-y-auto order-1 lg:order-2">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeProject}
@@ -124,7 +124,7 @@ export const ProjectsSection = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.5 }}
-                className="space-y-6"
+                className="space-y-6 pb-8"
               >
                 {/* Header Line */}
                 <div className="flex items-center gap-3">
