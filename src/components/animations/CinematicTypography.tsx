@@ -41,7 +41,7 @@ export const CinematicTypography = () => {
     });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
     
     // Handle WebGL context loss/restore
@@ -127,6 +127,7 @@ export const CinematicTypography = () => {
       { z: -1800, x: -150, y: 0, rotation: 0.4 },
       { z: -2400, x: 0, y: 0, rotation: 0 }
     ];
+    let isActive = true;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -137,6 +138,10 @@ export const CinematicTypography = () => {
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        onEnter: () => { isActive = true; },
+        onEnterBack: () => { isActive = true; },
+        onLeave: () => { isActive = false; },
+        onLeaveBack: () => { isActive = false; }
       }
     });
 
@@ -182,7 +187,9 @@ export const CinematicTypography = () => {
       // Update depth of field focus
       updateDepthOfField(camera.position.z);
 
-      renderer.render(scene, camera);
+      if (!document.hidden && isActive) {
+        renderer.render(scene, camera);
+      }
     };
     animate();
 
@@ -193,6 +200,8 @@ export const CinematicTypography = () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
+    const handleVisibility = () => { /* rendering is guarded, no extra work */ };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     // Cleanup
     return () => {
@@ -237,9 +246,9 @@ export const CinematicTypography = () => {
   const createParallaxStarField = (scene: THREE.Scene) => {
     // Create 3 layers of stars at different depths
     const layers = [
-      { count: 1500, depth: 8000, size: 2, speed: 0.0002, color: 0xa78bfa },
-      { count: 1000, depth: 5000, size: 3, speed: 0.0005, color: 0x60a5fa },
-      { count: 500, depth: 3000, size: 4, speed: 0.001, color: 0x22d3ee }
+      { count: 900, depth: 8000, size: 1.5, speed: 0.0002, color: 0xa78bfa },
+      { count: 600, depth: 5000, size: 2, speed: 0.0005, color: 0x60a5fa },
+      { count: 300, depth: 3000, size: 3, speed: 0.001, color: 0x22d3ee }
     ];
 
     layers.forEach((layer, layerIndex) => {
@@ -285,7 +294,7 @@ export const CinematicTypography = () => {
   };
 
   const createParticleField = (scene: THREE.Scene) => {
-    const particleCount = 1000;
+    const particleCount = 600;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -294,11 +303,11 @@ export const CinematicTypography = () => {
       positions[i] = (Math.random() - 0.5) * 4000;
       positions[i + 1] = (Math.random() - 0.5) * 2000;
       // Push particles further back
-      positions[i + 2] = (Math.random() - 0.5) * 5000 - 2000;
+      positions[i + 2] = (Math.random() - 0.5) * 5000 - 2500;
 
       const color = new THREE.Color();
       const hue = (positions[i + 2] + 3000) / 6000;
-      color.setHSL(hue, 0.9, 0.6);
+      color.setHSL(hue, 0.8, 0.55);
 
       colors[i] = color.r;
       colors[i + 1] = color.g;
@@ -309,10 +318,10 @@ export const CinematicTypography = () => {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 3,
+      size: 2,
       vertexColors: true,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.3,
       blending: THREE.AdditiveBlending
     });
 

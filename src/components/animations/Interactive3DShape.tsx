@@ -47,7 +47,7 @@ export const Interactive3DShape = ({
       failIfMajorPerformanceCaveat: false
     });
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
     const canvas = renderer.domElement;
 
