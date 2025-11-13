@@ -1,5 +1,3 @@
-'use client';
-
 import { CinematicTypography } from "@/components/animations/CinematicTypography";
 
 export const Cinematic3DSection = () => {

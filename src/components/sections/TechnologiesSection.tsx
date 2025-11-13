@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion";
 import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
