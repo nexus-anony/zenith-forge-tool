@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Trophy, Award, Code2, ExternalLink } from "lucide-react";

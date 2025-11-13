@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { ExternalLink, Github, Star } from "lucide-react";
