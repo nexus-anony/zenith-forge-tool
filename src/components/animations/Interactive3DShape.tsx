@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import * as THREE from 'three';
 
 interface Interactive3DShapeProps {
@@ -10,7 +10,7 @@ interface Interactive3DShapeProps {
   glowIntensity?: number;
 }
 
-export const Interactive3DShape = ({
+const Interactive3DShapeComponent = ({
   type = 'cube',
   color = '#a78bfa',
   size = 100,
@@ -170,3 +170,5 @@ export const Interactive3DShape = ({
     />
   );
 };
+
+export const Interactive3DShape = memo(Interactive3DShapeComponent);

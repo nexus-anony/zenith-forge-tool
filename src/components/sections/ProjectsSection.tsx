@@ -1,11 +1,11 @@
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { ExternalLink, Github, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { portfolioData } from "@/data/portfolio-data";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
@@ -17,7 +17,7 @@ const projectImages: Record<string, string> = {
   project3,
 };
 
-export const ProjectsSection = () => {
+const ProjectsSectionComponent = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [activeProject, setActiveProject] = useState(0);
   const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -245,3 +245,5 @@ export const ProjectsSection = () => {
     </section>
   );
 };
+
+export const ProjectsSection = memo(ProjectsSectionComponent);

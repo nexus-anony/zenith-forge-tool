@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const CinematicTypography = () => {
+const CinematicTypographyComponent = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -200,6 +200,9 @@ export const CinematicTypography = () => {
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
       cancelAnimationFrame(animationId);
+      
+      // Kill all GSAP tweens
+      gsap.killTweensOf('*');
       
       // Dispose all geometries and materials
       scene.traverse((object) => {
@@ -850,3 +853,5 @@ export const CinematicTypography = () => {
     />
   );
 };
+
+export const CinematicTypography = memo(CinematicTypographyComponent);
