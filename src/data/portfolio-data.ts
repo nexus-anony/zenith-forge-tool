@@ -64,18 +64,87 @@ export const portfolioData = {
       metrics: {
         users: "100+",
         performance: 87,
-        stars: 0
+        stars: 1
       },
       links: {
-        demo: "https://demo.com",
-        github: "https://github.com/username/pawgle"
+        demo: "https://pawgle.vercel.app",
+        github: "https://github.com/WhoamiI00/PawGleFrontend"
       },
       image: "project1"
     },
     {
       id: 2,
-      title: "NeoCast - Video Platform",
+      title: "Imaginify - AI Image Platform",
       category: "featured",
+      description: "Advanced AI-powered image manipulation platform with generative capabilities. Built with Next.js and TypeScript, featuring modern UI/UX and seamless user experience for image transformation and enhancement.",
+      technologies: ["Next.js", "TypeScript", "AI APIs", "Tailwind CSS"],
+      features: [
+        "AI-powered image generation",
+        "Advanced image manipulation tools",
+        "Real-time preview and processing",
+        "Modern responsive interface"
+      ],
+      metrics: {
+        users: "50+",
+        performance: 94,
+        stars: 0
+      },
+      links: {
+        demo: "https://imaginify-beta-tawny.vercel.app",
+        github: "https://github.com/WhoamiI00/Imaginify"
+      },
+      image: "project2"
+    },
+    {
+      id: 3,
+      title: "Fizzy - Modern Web Application",
+      category: "featured",
+      description: "Feature-rich web application built with cutting-edge technologies. Showcases modern design patterns and optimal performance with TypeScript and contemporary web development practices.",
+      technologies: ["TypeScript", "React", "Next.js", "Prismic CMS"],
+      features: [
+        "Modern architecture and design",
+        "Type-safe development",
+        "CMS integration",
+        "Optimized performance"
+      ],
+      metrics: {
+        users: "25+",
+        performance: 96,
+        stars: 0
+      },
+      links: {
+        demo: "https://fizzy-theta.vercel.app",
+        github: "https://github.com/WhoamiI00/Fizzy"
+      },
+      image: "project3"
+    },
+    {
+      id: 4,
+      title: "SportyIndia - Sports Platform",
+      category: "web",
+      description: "Comprehensive sports platform tailored for the Indian market. Features interactive UI, real-time updates, and engaging user experience built with Next.js and modern JavaScript.",
+      technologies: ["Next.js", "JavaScript", "React", "Tailwind CSS"],
+      features: [
+        "Sports content aggregation",
+        "Interactive user interface",
+        "Real-time updates",
+        "Mobile-responsive design"
+      ],
+      metrics: {
+        users: "30+",
+        performance: 90,
+        stars: 0
+      },
+      links: {
+        demo: "https://sporty-india-521t.vercel.app",
+        github: "https://github.com/WhoamiI00/SportyIndia"
+      },
+      image: "project1"
+    },
+    {
+      id: 5,
+      title: "NeoCast - Video Platform",
+      category: "web",
       description: "Screen recording and video platform with AI-based transcript generation tested on 500+ videos, enhancing keyword searchability by 40%. Features secure authentication and Arcjet bot protection sustaining 60 requests/minute.",
       technologies: ["Next.js", "TypeScript", "Bunny.net", "Xata", "Drizzle ORM", "Arcjet"],
       features: [
@@ -90,15 +159,15 @@ export const portfolioData = {
         stars: 0
       },
       links: {
-        demo: "https://demo.com",
-        github: "https://github.com/username/neocast"
+        demo: "https://neocast.vercel.app",
+        github: "https://github.com/WhoamiI00/NeoCast"
       },
       image: "project2"
     },
     {
-      id: 3,
+      id: 6,
       title: "NeoVids - Cross-Platform Mobile App",
-      category: "featured",
+      category: "mobile",
       description: "Cross-platform video app for Android/iOS handling 100+ videos. Reduced buffering by 40% through performance optimization and adaptive bitrate streaming, cutting server requests by 20%.",
       technologies: ["React Native", "Expo", "Appwrite"],
       features: [
@@ -113,8 +182,8 @@ export const portfolioData = {
         stars: 0
       },
       links: {
-        demo: "https://demo.com",
-        github: "https://github.com/username/neovids"
+        demo: "https://neovids.app",
+        github: "https://github.com/WhoamiI00/NeoVids"
       },
       image: "project3"
     }
@@ -164,10 +233,10 @@ export const portfolioData = {
   profileLinks: [
     {
       platform: "GitHub",
-      url: "https://github.com/yourusername",
+      url: "https://github.com/WhoamiI00",
       icon: "Github",
       color: "text-foreground",
-      stats: { label: "Repositories", value: "50+" }
+      stats: { label: "Repositories", value: "20+" }
     },
     {
       platform: "LinkedIn",
