@@ -72,15 +72,15 @@ export const AboutSection = () => {
               <Card className="glass p-6">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <div className="text-2xl font-bold gradient-text">3+</div>
+                    <div className="text-2xl font-bold gradient-text">2+</div>
                     <div className="text-xs text-muted-foreground">Years Exp</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold gradient-text">50+</div>
+                    <div className="text-2xl font-bold gradient-text">20+</div>
                     <div className="text-xs text-muted-foreground">Projects</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold gradient-text">1500+</div>
+                    <div className="text-2xl font-bold gradient-text">1300+</div>
                     <div className="text-xs text-muted-foreground">Problems Solved</div>
                   </div>
                 </div>
