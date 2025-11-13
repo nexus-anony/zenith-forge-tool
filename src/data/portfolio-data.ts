@@ -1,121 +1,120 @@
 export const portfolioData = {
   hero: {
-    name: "Alex Developer",
-    title: "Full-Stack Developer",
-    tagline: "Crafting Digital Experiences",
-    description: "Web/App Developer specializing in building exceptional digital experiences with motion design and interactive interfaces",
+    name: "Ankit Raj",
+    title: "Full-Stack Developer & Competitive Programmer",
+    tagline: "Building Scalable Solutions",
+    description: "Computer Science student specializing in full-stack development, AI/ML applications, and competitive programming with expertise in modern web technologies",
   },
   
   about: {
-    intro: "I'm a passionate full-stack developer with a love for creating seamless digital experiences. Currently building innovative solutions and exploring the intersection of design and technology. I specialize in modern web technologies and competitive programming.",
-    journey: "My journey began with a curiosity about how things work on the web, and since then, I've been committed to continuous learning and pushing the boundaries of what's possible with code.",
-    interests: ["Competitive Programming", "UI/UX Design", "Open Source", "Teaching & Mentoring"],
-    experience: "3+ Years",
-    location: "San Francisco, CA",
+    intro: "I'm a passionate full-stack developer with expertise in building scalable web applications and AI-powered solutions. I specialize in modern web technologies, cloud architecture, and competitive programming, delivering solutions with 99.9% uptime and 30-60% performance improvements.",
+    journey: "My journey in tech is driven by a passion for solving complex problems through code. As an active open source contributor and competitive programmer, I continuously push the boundaries of what's possible with technology, from building pet recognition platforms to video streaming solutions.",
+    interests: ["Competitive Programming", "AI/ML Applications", "Open Source", "Cloud Architecture"],
+    experience: "2+ Years",
+    location: "Jabalpur, India",
   },
   
   technologies: [
     // Languages
+    { name: "Python", category: "language", icon: "Code" },
     { name: "JavaScript", category: "language", icon: "Code2" },
     { name: "TypeScript", category: "language", icon: "FileCode" },
-    { name: "Python", category: "language", icon: "Code" },
     { name: "Java", category: "language", icon: "Coffee" },
     { name: "C++", category: "language", icon: "Terminal" },
+    { name: "PHP", category: "language", icon: "Code" },
+    { name: "SQL", category: "language", icon: "Database" },
     
     // Frameworks
     { name: "React", category: "framework", icon: "Atom" },
     { name: "Next.js", category: "framework", icon: "Layers" },
     { name: "Node.js", category: "framework", icon: "Server" },
-    { name: "TailwindCSS", category: "framework", icon: "Paintbrush" },
     { name: "Django", category: "framework", icon: "Database" },
+    { name: "Flask", category: "framework", icon: "Server" },
+    { name: "Express.js", category: "framework", icon: "Server" },
+    { name: "Redux", category: "framework", icon: "Layers" },
     
-    // Tools
-    { name: "Git", category: "tool", icon: "GitBranch" },
-    { name: "VS Code", category: "tool", icon: "Code" },
-    { name: "Figma", category: "tool", icon: "Palette" },
-    { name: "Docker", category: "tool", icon: "Container" },
-    { name: "Postman", category: "tool", icon: "Send" },
-    
-    // Platforms
-    { name: "AWS", category: "platform", icon: "Cloud" },
-    { name: "Vercel", category: "platform", icon: "Rocket" },
-    { name: "Firebase", category: "platform", icon: "Flame" },
+    // Databases
     { name: "MongoDB", category: "platform", icon: "Database" },
+    { name: "PostgreSQL", category: "platform", icon: "Database" },
+    { name: "MySQL", category: "platform", icon: "Database" },
+    { name: "Supabase", category: "platform", icon: "Database" },
     
-    // DevOps
-    { name: "Kubernetes", category: "devops", icon: "Network" },
-    { name: "CI/CD", category: "devops", icon: "GitPullRequest" },
-    { name: "Linux", category: "devops", icon: "Terminal" },
-    { name: "Nginx", category: "devops", icon: "Server" },
+    // Tools & Platforms
+    { name: "Docker", category: "tool", icon: "Container" },
+    { name: "Git", category: "tool", icon: "GitBranch" },
+    { name: "React Native", category: "framework", icon: "Smartphone" },
+    { name: "Expo", category: "tool", icon: "Smartphone" },
+    { name: "HuggingFace", category: "platform", icon: "Brain" },
+    { name: "Google Cloud", category: "platform", icon: "Cloud" },
   ],
   
   projects: [
     {
       id: 1,
-      title: "Analytics Dashboard",
+      title: "PawGle - Pet Recognition Platform",
       category: "featured",
-      description: "Comprehensive analytics platform with real-time data visualization, customizable reports, and AI-powered insights for business intelligence.",
-      technologies: ["Next.js", "TypeScript", "TailwindCSS", "MongoDB"],
+      description: "AI-powered pet image recognition platform serving 100+ users with 10+ daily uploads. Features ArcFace-based facial recognition achieving 87%+ accuracy on 500+ test samples with comprehensive Lost and Found system.",
+      technologies: ["React.js", "Next.js", "Django", "Docker", "Supabase", "HuggingFace"],
       features: [
-        "Real-time data processing",
-        "Interactive charts & graphs",
-        "AI-powered predictions",
-        "Custom report builder"
+        "ArcFace facial recognition (87%+ accuracy)",
+        "Lost and Found system with email notifications",
+        "Database indexing with 25% faster API response",
+        "Automated testing suite for 2,000+ monthly requests"
       ],
       metrics: {
-        users: "1,200+",
-        performance: 98,
-        stars: 124
+        users: "100+",
+        performance: 87,
+        stars: 0
       },
       links: {
         demo: "https://demo.com",
-        github: "https://github.com/username/project1"
+        github: "https://github.com/username/pawgle"
       },
       image: "project1"
     },
     {
       id: 2,
-      title: "E-Commerce Mobile App",
+      title: "NeoCast - Video Platform",
       category: "featured",
-      description: "Modern mobile shopping experience with seamless checkout, personalized recommendations, and real-time inventory tracking.",
-      technologies: ["React Native", "Firebase", "Stripe", "Redux"],
+      description: "Screen recording and video platform with AI-based transcript generation tested on 500+ videos, enhancing keyword searchability by 40%. Features secure authentication and Arcjet bot protection sustaining 60 requests/minute.",
+      technologies: ["Next.js", "TypeScript", "Bunny.net", "Xata", "Drizzle ORM", "Arcjet"],
       features: [
-        "Secure payment integration",
-        "Push notifications",
-        "Wishlist & favorites",
-        "Order tracking"
+        "AI transcript generation (500+ videos)",
+        "40% improved keyword searchability",
+        "Token-based secure authentication",
+        "Bot protection with zero downtime"
       ],
       metrics: {
-        users: "5,000+",
+        users: "100+",
         performance: 95,
-        stars: 89
+        stars: 0
       },
       links: {
         demo: "https://demo.com",
-        github: "https://github.com/username/project2"
+        github: "https://github.com/username/neocast"
       },
       image: "project2"
     },
     {
       id: 3,
-      title: "AI Chat Assistant",
+      title: "NeoVids - Cross-Platform Mobile App",
       category: "featured",
-      description: "Intelligent conversational AI with natural language processing, context awareness, and multi-language support.",
-      technologies: ["Python", "React", "OpenAI", "WebSocket"],
+      description: "Cross-platform video app for Android/iOS handling 100+ videos. Reduced buffering by 40% through performance optimization and adaptive bitrate streaming, cutting server requests by 20%.",
+      technologies: ["React Native", "Expo", "Appwrite"],
       features: [
-        "Natural language understanding",
-        "Context-aware responses",
-        "Multi-language support",
-        "Real-time messaging"
+        "Cross-platform compatibility (Android/iOS)",
+        "40% reduced buffering time",
+        "Adaptive bitrate streaming",
+        "Caching and lazy loading (20% fewer requests)"
       ],
       metrics: {
-        users: "800+",
-        performance: 96,
-        stars: 156
+        users: "100+",
+        performance: 92,
+        stars: 0
       },
       links: {
         demo: "https://demo.com",
-        github: "https://github.com/username/project3"
+        github: "https://github.com/username/neovids"
       },
       image: "project3"
     }
@@ -123,48 +122,42 @@ export const portfolioData = {
   
   achievements: {
     codeforces: {
-      rating: 1547,
-      maxRating: 1623,
+      rating: 1400,
+      maxRating: 1450,
       rank: "Specialist",
-      problemsSolved: 450,
-      contests: 35,
-      profileUrl: "https://codeforces.com/profile/username"
+      problemsSolved: 400,
+      contests: 30,
+      profileUrl: "https://codeforces.com/profile/kurumi_0_0"
     },
     codechef: {
       rating: "4★",
       stars: 4,
-      problemsSolved: 280,
-      contests: 28,
-      profileUrl: "https://codechef.com/users/username"
+      problemsSolved: 300,
+      contests: 25,
+      profileUrl: "https://codechef.com/users/nexus_neon"
     },
     leetcode: {
       badge: "Knight",
-      problemsSolved: 650,
-      easy: 200,
-      medium: 350,
+      problemsSolved: 600,
+      easy: 180,
+      medium: 320,
       hard: 100,
-      profileUrl: "https://leetcode.com/username"
+      profileUrl: "https://leetcode.com/kurumi_0_0"
     }
   },
   
   certifications: [
     {
-      name: "AWS Certified Developer",
-      issuer: "Amazon Web Services",
-      date: "2024-05",
+      name: "Google Cloud Skills Boost Specialist",
+      issuer: "Google Cloud",
+      date: "2025-06",
       category: "Cloud Computing"
     },
     {
-      name: "Professional Scrum Master",
-      issuer: "Scrum.org",
-      date: "2024-03",
-      category: "Project Management"
-    },
-    {
-      name: "React Advanced",
-      issuer: "Meta",
-      date: "2023-11",
-      category: "Web Development"
+      name: "Building LLM Applications with Prompt Engineering",
+      issuer: "NVIDIA Deep Learning Institute",
+      date: "2025-06",
+      category: "AI/ML"
     }
   ],
   
@@ -174,54 +167,47 @@ export const portfolioData = {
       url: "https://github.com/yourusername",
       icon: "Github",
       color: "text-foreground",
-      stats: { label: "Repositories", value: "42" }
+      stats: { label: "Repositories", value: "50+" }
     },
     {
       platform: "LinkedIn",
       url: "https://linkedin.com/in/yourprofile",
       icon: "Linkedin",
       color: "text-secondary",
-      stats: { label: "Connections", value: "500+" }
+      stats: { label: "Connections", value: "300+" }
     },
     {
       platform: "LeetCode",
-      url: "https://leetcode.com/username",
+      url: "https://leetcode.com/kurumi_0_0",
       icon: "Code2",
       color: "text-orange",
-      stats: { label: "Problems", value: "650+" }
+      stats: { label: "Problems", value: "600+" }
     },
     {
       platform: "Codeforces",
-      url: "https://codeforces.com/profile/username",
+      url: "https://codeforces.com/profile/kurumi_0_0",
       icon: "Trophy",
       color: "text-secondary",
-      stats: { label: "Rating", value: "1547" }
+      stats: { label: "Rating", value: "1400+" }
     },
     {
       platform: "CodeChef",
-      url: "https://codechef.com/users/username",
+      url: "https://codechef.com/users/nexus_neon",
       icon: "Award",
       color: "text-yellow",
       stats: { label: "Stars", value: "4★" }
-    },
-    {
-      platform: "Twitter",
-      url: "https://twitter.com/yourhandle",
-      icon: "Twitter",
-      color: "text-secondary",
-      stats: { label: "Followers", value: "1.2K" }
     }
   ],
   
   contact: {
-    email: "alex@developer.com",
+    email: "ankit.raj@example.com",
     availability: "Available for opportunities",
     subjects: [
       "General Inquiry",
       "Project Collaboration",
       "Job Opportunity",
       "Freelance Work",
-      "Speaking Engagement",
+      "Open Source Contribution",
       "Other"
     ]
   }
