@@ -15,37 +15,73 @@ export const portfolioData = {
   },
   
   technologies: [
-    // Languages
+    // Programming Languages
     { name: "Python", category: "language", icon: "Code" },
-    { name: "JavaScript", category: "language", icon: "Code2" },
-    { name: "TypeScript", category: "language", icon: "FileCode" },
     { name: "Java", category: "language", icon: "Coffee" },
     { name: "C++", category: "language", icon: "Terminal" },
+    { name: "C", category: "language", icon: "Terminal" },
+    { name: "JavaScript", category: "language", icon: "Code2" },
+    { name: "TypeScript", category: "language", icon: "FileCode" },
     { name: "PHP", category: "language", icon: "Code" },
     { name: "SQL", category: "language", icon: "Database" },
+    { name: "Bash", category: "language", icon: "Terminal" },
     
-    // Frameworks
-    { name: "React", category: "framework", icon: "Atom" },
+    // Frontend Technologies
+    { name: "React.js", category: "framework", icon: "Atom" },
     { name: "Next.js", category: "framework", icon: "Layers" },
-    { name: "Node.js", category: "framework", icon: "Server" },
-    { name: "Django", category: "framework", icon: "Database" },
-    { name: "Flask", category: "framework", icon: "Server" },
-    { name: "Express.js", category: "framework", icon: "Server" },
     { name: "Redux", category: "framework", icon: "Layers" },
+    { name: "Tailwind CSS", category: "framework", icon: "Palette" },
+    { name: "Framer Motion", category: "framework", icon: "Zap" },
+    { name: "Three.js", category: "framework", icon: "Box" },
+    { name: "Chart.js", category: "framework", icon: "BarChart" },
+    { name: "HTML/CSS", category: "framework", icon: "Code2" },
     
-    // Databases
-    { name: "MongoDB", category: "platform", icon: "Database" },
-    { name: "PostgreSQL", category: "platform", icon: "Database" },
-    { name: "MySQL", category: "platform", icon: "Database" },
-    { name: "Supabase", category: "platform", icon: "Database" },
-    
-    // Tools & Platforms
-    { name: "Docker", category: "tool", icon: "Container" },
-    { name: "Git", category: "tool", icon: "GitBranch" },
+    // Mobile Development
     { name: "React Native", category: "framework", icon: "Smartphone" },
     { name: "Expo", category: "tool", icon: "Smartphone" },
+    
+    // Backend Technologies
+    { name: "Node.js", category: "framework", icon: "Server" },
+    { name: "Express.js", category: "framework", icon: "Server" },
+    { name: "Django", category: "framework", icon: "Server" },
+    { name: "Flask", category: "framework", icon: "Server" },
+    { name: "FastAPI", category: "framework", icon: "Zap" },
+    
+    // AI/ML/LLMs
+    { name: "LangChain", category: "platform", icon: "Brain" },
+    { name: "LangGraph", category: "platform", icon: "Brain" },
     { name: "HuggingFace", category: "platform", icon: "Brain" },
+    { name: "ArcFace", category: "platform", icon: "ScanFace" },
+    { name: "Prompt Engineering", category: "platform", icon: "MessageSquare" },
+    
+    // Databases & Storage
+    { name: "MySQL", category: "database", icon: "Database" },
+    { name: "PostgreSQL", category: "database", icon: "Database" },
+    { name: "MongoDB", category: "database", icon: "Database" },
+    { name: "SQLite", category: "database", icon: "Database" },
+    { name: "Supabase", category: "platform", icon: "Database" },
+    { name: "Xata", category: "platform", icon: "Database" },
+    { name: "Appwrite", category: "platform", icon: "Database" },
+    { name: "Drizzle ORM", category: "tool", icon: "Database" },
+    
+    // DevOps & Cloud
+    { name: "Docker", category: "tool", icon: "Container" },
     { name: "Google Cloud", category: "platform", icon: "Cloud" },
+    { name: "Bunny.net", category: "platform", icon: "CloudCog" },
+    { name: "Git", category: "tool", icon: "GitBranch" },
+    { name: "GitHub", category: "tool", icon: "Github" },
+    { name: "CI/CD", category: "tool", icon: "GitPullRequest" },
+    
+    // Testing & QA
+    { name: "API Testing", category: "tool", icon: "TestTube" },
+    { name: "Unit Testing", category: "tool", icon: "CheckCircle" },
+    { name: "Integration Testing", category: "tool", icon: "GitMerge" },
+    { name: "Performance Testing", category: "tool", icon: "Gauge" },
+    
+    // Security
+    { name: "JWT Auth", category: "tool", icon: "Lock" },
+    { name: "Arcjet", category: "tool", icon: "Shield" },
+    { name: "API Security", category: "tool", icon: "ShieldCheck" },
   ],
   
   projects: [
