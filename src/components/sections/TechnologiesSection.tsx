@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue } from "framer-motion";
 import { Interactive3DShape } from "@/components/animations/Interactive3DShape";
 
 interface TechItem {
@@ -16,7 +16,7 @@ const categoryColors = {
   frameworks: "#06b6d4", // Cyan
   tools: "#10b981", // Emerald
   platforms: "#f59e0b", // Amber
-  database: "#ec4899", // Pink
+  devops: "#ef4444", // Red
 };
 
 const allTechnologies: TechItem[] = [
@@ -28,36 +28,45 @@ const allTechnologies: TechItem[] = [
   { name: "Java", category: "languages", x: 0, y: 0, color: categoryColors.languages, icon: "☕" },
   { name: "PHP", category: "languages", x: 0, y: 0, color: categoryColors.languages, icon: "🐘" },
   { name: "SQL", category: "languages", x: 0, y: 0, color: categoryColors.languages, icon: "🗃️" },
-  { name: "Bash", category: "languages", x: 0, y: 0, color: categoryColors.languages, icon: "💻" },
-  { name: "C", category: "languages", x: 0, y: 0, color: categoryColors.languages, icon: "🔧" },
 
-  // Frontend Frameworks
-  { name: "React", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "⚛️" },
+  // Frameworks
+  { name: "React.js", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "⚛️" },
   { name: "Next.js", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "▲" },
+  { name: "Django", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🎸" },
+  { name: "Node.js", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🟢" },
+  { name: "Express.js", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🚂" },
   { name: "Redux", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🔄" },
-  { name: "Tailwind", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🎨" },
-  { name: "Framer", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "⚡" },
-  { name: "Three.js", category: "frameworks", x: 0, y: 0, color: categoryColors.frameworks, icon: "🎲" },
 
-  // Backend & APIs
-  { name: "Node.js", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🟢" },
-  { name: "Express", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🚂" },
-  { name: "Django", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🎸" },
-  { name: "Flask", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🧪" },
-  { name: "FastAPI", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "⚡" },
+  // Tools
+  { name: "Docker", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🐳" },
+  { name: "Git", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🌿" },
+  { name: "JWT", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🔐" },
+  { name: "Web3.js", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🌐" },
+  { name: "MySQL", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🐬" },
+  { name: "MongoDB", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🍃" },
+  { name: "Supabase", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "⚡" },
+  { name: "Redis", category: "tools", x: 0, y: 0, color: categoryColors.tools, icon: "🔴" },
 
-  // Databases
-  { name: "MySQL", category: "database", x: 0, y: 0, color: categoryColors.database, icon: "🐬" },
-  { name: "PostgreSQL", category: "database", x: 0, y: 0, color: categoryColors.database, icon: "🐘" },
-  { name: "MongoDB", category: "database", x: 0, y: 0, color: categoryColors.database, icon: "🍃" },
-  { name: "Supabase", category: "database", x: 0, y: 0, color: categoryColors.database, icon: "⚡" },
-  { name: "SQLite", category: "database", x: 0, y: 0, color: categoryColors.database, icon: "💾" },
+  // Platforms
+  { name: "AWS", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "☁️" },
+  { name: "GCP", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🌤️" },
+  { name: "Linux", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🐧" },
+  { name: "Windows", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🪟" },
 
-  // Cloud & DevOps
-  { name: "Docker", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🐳" },
-  { name: "GCP", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "☁️" },
-  { name: "Git", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🌿" },
-  { name: "GitHub", category: "platforms", x: 0, y: 0, color: categoryColors.platforms, icon: "🐙" },
+  // DevOps
+  { name: "Terraform", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🏗️" },
+  { name: "Jenkins", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🔧" },
+  { name: "Kubernetes", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "⚙️" },
+  { name: "Grafana", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "📊" },
+  { name: "SonarQube", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🔍" },
+  { name: "Prometheus", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "📈" },
+  { name: "Ansible", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🔀" },
+  { name: "GitLab CI/CD", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🦊" },
+  { name: "Nginx", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🌐" },
+  { name: "Apache", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🪶" },
+  { name: "Helm", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "⚓" },
+  { name: "ArgoCD", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🚀" },
+  { name: "Vault", category: "devops", x: 0, y: 0, color: categoryColors.devops, icon: "🔒" },
 ];
 
 export const TechnologiesSection = () => {
@@ -66,7 +75,9 @@ export const TechnologiesSection = () => {
   const [technologies, setTechnologies] = useState<TechItem[]>([]);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const animationFrameRef = useRef<number>();
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
   // Initialize positions
   useEffect(() => {
@@ -82,10 +93,10 @@ export const TechnologiesSection = () => {
 
       const positionedTechs = allTechnologies.map((tech, index) => {
         const angle = index * 137.5 * (Math.PI / 180);
-        const radius = 50 + index * 12;
+        const radius = 50 + index * 15 + Math.random() * 50;
 
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
+        const x = centerX + Math.cos(angle) * radius + (Math.random() - 0.5) * 100;
+        const y = centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * 100;
 
         return {
           ...tech,
@@ -102,82 +113,68 @@ export const TechnologiesSection = () => {
     return () => window.removeEventListener("resize", initializePositions);
   }, []);
 
-  // Optimized mouse tracking with requestAnimationFrame
+  // Mouse tracking
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
 
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-      animationFrameRef.current = requestAnimationFrame(() => {
-        const rect = containerRef.current!.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        setMousePosition({ x, y });
-      });
+      setMousePosition({ x, y });
+      mouseX.set(x);
+      mouseY.set(y);
     };
 
     const container = containerRef.current;
     if (container) {
-      container.addEventListener("mousemove", handleMouseMove, { passive: true });
-      return () => {
-        container.removeEventListener("mousemove", handleMouseMove);
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-      };
+      container.addEventListener("mousemove", handleMouseMove);
+      return () => container.removeEventListener("mousemove", handleMouseMove);
     }
-  }, []);
+  }, [mouseX, mouseY]);
 
-  // Simplified magnetic effect
-  const getMagneticOffset = useCallback((techX: number, techY: number) => {
-    const dx = mousePosition.x - techX;
-    const dy = mousePosition.y - techY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+  // Magnetic effect
+  const getMagneticOffset = (techX: number, techY: number) => {
+    const distance = Math.sqrt(Math.pow(mousePosition.x - techX, 2) + Math.pow(mousePosition.y - techY, 2));
 
-    if (distance > 100) return { x: 0, y: 0 };
+    if (distance > 150) return { x: 0, y: 0 };
 
-    const force = Math.max(0, 1 - distance / 100) * 0.5;
+    const force = Math.max(0, 1 - distance / 150);
+    const angle = Math.atan2(mousePosition.y - techY, mousePosition.x - techX);
 
     return {
-      x: (dx / distance) * force * 20,
-      y: (dy / distance) * force * 20,
+      x: Math.cos(angle) * force * 30,
+      y: Math.sin(angle) * force * 30,
     };
-  }, [mousePosition.x, mousePosition.y]);
+  };
 
-  // Memoized connections - only recalculate when technologies change
-  const connections = useMemo(() => {
-    const result: Array<{ from: TechItem; to: TechItem; strength: number }> = [];
+  // Get connections between related technologies
+  const getConnections = () => {
+    const connections: Array<{ from: TechItem; to: TechItem; strength: number }> = [];
 
-    for (let i = 0; i < technologies.length; i++) {
-      for (let j = i + 1; j < technologies.length; j++) {
-        const tech1 = technologies[i];
-        const tech2 = technologies[j];
+    technologies.forEach((tech1, i) => {
+      technologies.forEach((tech2, j) => {
+        if (i >= j) return;
 
-        const dx = tech1.x - tech2.x;
-        const dy = tech1.y - tech2.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const distance = Math.sqrt(Math.pow(tech1.x - tech2.x, 2) + Math.pow(tech1.y - tech2.y, 2));
 
         const sameCategory = tech1.category === tech2.category;
+        const closeDistance = distance < 120;
 
-        if (sameCategory && distance < 200) {
-          result.push({ from: tech1, to: tech2, strength: 0.4 });
+        if (sameCategory || closeDistance) {
+          const strength = sameCategory ? 0.6 : Math.max(0, 1 - distance / 120) * 0.3;
+          if (strength > 0.1) {
+            connections.push({ from: tech1, to: tech2, strength });
+          }
         }
-      }
-    }
+      });
+    });
 
-    return result;
-  }, [technologies]);
+    return connections;
+  };
 
-  // Filter technologies based on category
-  const filteredTechnologies = useMemo(() => {
-    if (!selectedCategory) return technologies;
-    return technologies.filter(tech => tech.category === selectedCategory);
-  }, [technologies, selectedCategory]);
-
-  const displayTechnologies = filteredTechnologies.length > 0 ? filteredTechnologies : technologies;
+  const connections = getConnections();
 
   return (
     <section id="technologies" className="py-20 sm:py-32 relative overflow-hidden">
@@ -193,7 +190,7 @@ export const TechnologiesSection = () => {
             Technologies & <span className="gradient-text">Tools</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-3xl mx-auto text-center mb-12">
-            My technical toolkit - hover to explore
+            An interactive constellation of technologies I work with. Hover to explore the connections.
           </p>
 
           {/* Category Legend */}
@@ -396,6 +393,23 @@ export const TechnologiesSection = () => {
                 </motion.div>
               );
             })}
+
+            {/* Mouse follower effect */}
+            <motion.div
+              className="absolute w-32 h-32 rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)",
+                x: mouseX,
+                y: mouseY,
+                translateX: "-50%",
+                translateY: "-50%",
+              }}
+              animate={{
+                scale: hoveredTech ? 1.5 : 1,
+                opacity: hoveredTech ? 0.8 : 0.4,
+              }}
+              transition={{ duration: 0.3 }}
+            />
 
             {/* Category info panel */}
             {selectedCategory && (
