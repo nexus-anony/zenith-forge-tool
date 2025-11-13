@@ -240,7 +240,7 @@ export const portfolioData = {
     },
     {
       platform: "LinkedIn",
-      url: "https://linkedin.com/in/yourprofile",
+      url: "https://www.linkedin.com/in/ankit-raj-8043a32ba",
       icon: "Linkedin",
       color: "text-secondary",
       stats: { label: "Connections", value: "300+" }
@@ -269,7 +269,7 @@ export const portfolioData = {
   ],
   
   contact: {
-    email: "ankit.raj@example.com",
+    email: "ankit62878@gmail.com",
     availability: "Available for opportunities",
     subjects: [
       "General Inquiry",
