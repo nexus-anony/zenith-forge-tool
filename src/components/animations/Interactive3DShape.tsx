@@ -42,10 +42,25 @@ export const Interactive3DShape = ({
     // Renderer
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true
+      alpha: true,
+      powerPreference: 'high-performance',
+      failIfMajorPerformanceCaveat: false
     });
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+    const canvas = renderer.domElement;
+
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      cancelAnimationFrame(animationId);
+    };
+    const handleContextRestored = () => {
+      renderer.setSize(containerRef.current!.clientWidth, containerRef.current!.clientHeight);
+    };
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+
     containerRef.current.appendChild(renderer.domElement);
 
     // Create geometry based on type
@@ -67,15 +82,13 @@ export const Interactive3DShape = ({
         geometry = new THREE.BoxGeometry(size, size, size);
     }
 
-    // Material with glow
+    // Lightweight material (avoids heavy shaders)
     const colorValue = new THREE.Color(color);
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshBasicMaterial({
       color: colorValue,
-      metalness: 0.8,
-      roughness: 0.2,
-      emissive: colorValue,
-      emissiveIntensity: glowIntensity,
-      wireframe: true
+      wireframe: true,
+      transparent: true,
+      opacity: 0.8
     });
 
     // Create mesh
@@ -84,14 +97,7 @@ export const Interactive3DShape = ({
     meshRef.current = mesh;
     scene.add(mesh);
 
-    // Add glow effect with point light
-    const pointLight = new THREE.PointLight(colorValue, 2, 300);
-    pointLight.position.copy(mesh.position);
-    scene.add(pointLight);
-
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-    scene.add(ambientLight);
+    // No lights needed for MeshBasicMaterial; keep scene lightweight
 
     // Mouse tracking
     const handleMouseMove = (e: MouseEvent) => {
@@ -125,8 +131,7 @@ export const Interactive3DShape = ({
         const scale = 1 + Math.sin(Date.now() * 0.001) * 0.1;
         meshRef.current.scale.set(scale, scale, scale);
 
-        // Update point light intensity
-        pointLight.intensity = 2 + Math.sin(Date.now() * 0.002) * 0.5;
+        // no dynamic light updates needed
       }
 
       renderer.render(scene, camera);
@@ -149,7 +154,10 @@ export const Interactive3DShape = ({
       cancelAnimationFrame(animationId);
       geometry.dispose();
       material.dispose();
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
       renderer.dispose();
+      renderer.forceContextLoss();
       containerRef.current?.removeChild(renderer.domElement);
     };
   }, [type, color, size, position, autoRotate, glowIntensity]);

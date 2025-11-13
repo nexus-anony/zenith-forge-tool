@@ -49,7 +49,7 @@ export const ProjectsSection = () => {
   const project = portfolioData.projects[activeProject];
 
   return (
-    <section id="projects" ref={ref} className="py-20 sm:py-32 relative overflow-hidden">
+    <section id="projects" ref={ref} className="py-20 sm:py-32 relative">
       <Interactive3DShape type="torus" color="#60a5fa" size={70} position={{ x: 100, y: 50, z: -100 }} />
       <div className="container px-4 sm:px-6 mb-16">
         <motion.div

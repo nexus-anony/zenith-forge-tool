@@ -42,6 +42,7 @@ export const CinematicTypography = () => {
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
     
     // Handle WebGL context loss/restore
     const canvas = renderer.domElement;
@@ -131,10 +132,11 @@ export const CinematicTypography = () => {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=500%',
+        end: '+=300%',
         scrub: 2,
         pin: true,
-        anticipatePin: 1
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
       }
     });
 
